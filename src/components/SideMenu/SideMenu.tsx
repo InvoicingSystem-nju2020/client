@@ -1,6 +1,7 @@
 import { BaseParam } from '../../util/config';
 
-import SVG_ICONS from '../../components/SvgIcon/SvgIcon'
+// import SVG_ICONS from '../../components/SvgIcon/SvgIcon'
+import { Icon_OrdersManage, Icon_PurchaseManage, Icon_CustomerManage, Icon_SuppliersManage } from '../SvgIcon/SvgIcon'
 
 import React from 'react';
 import { Menu, Icon } from 'antd';
@@ -18,11 +19,10 @@ function SideMenu(props: any) {
   // console.log(path[1] !== undefined);
   const selectedKey: string[] = (path[1] !== undefined && path[1] !== '') ? [path[0] + '_' + path[1]]
     : ((path[0] === 'home' || path[0] === '') ? ['home'] : ['']);
-  const openKey: string[] = (path[0] !== undefined && path[0] !== 'home') ? ['orders'] : [path[0]];
-  // console.log(selectedKey);
-  // console.log(openKey);
-
-  // const icon_orders = (props:any) => <SvgIcon svg={svg_orders} />;
+  const openKey: string[] = selectedKey[0] === 'home' ? ['orders'] : [path[0]];
+  // const openKey: string[] = (path[0] !== undefined && path[0] === 'home') ? ['orders'] : [path[0]];
+  // console.log("selectedKey: "+selectedKey);
+  // console.log("openKey: "+openKey);
 
   return (
     <div className="SideMenu">
@@ -41,7 +41,7 @@ function SideMenu(props: any) {
           key="orders"
           title={
             <span>
-              <Icon component={SVG_ICONS['ordersManage']} />
+              <Icon component={Icon_OrdersManage} />
               <span>订单管理</span>
             </span>
           }
@@ -53,7 +53,7 @@ function SideMenu(props: any) {
           key="purchase"
           title={
             <span>
-              <Icon component={SVG_ICONS['purchaseManage']} />
+              <Icon component={Icon_PurchaseManage} />
               <span>进货管理</span>
             </span>
           }
@@ -78,7 +78,7 @@ function SideMenu(props: any) {
           key="customers"
           title={
             <span>
-              <Icon component={SVG_ICONS['customersManage']} />
+              <Icon component={Icon_CustomerManage} />
               <span>客户管理</span>
             </span>
           }
@@ -90,7 +90,7 @@ function SideMenu(props: any) {
           key="suppliers"
           title={
             <span>
-              <Icon component={SVG_ICONS['suppliersManage']} />
+              <Icon component={Icon_SuppliersManage} />
               <span>供应商管理</span>
             </span>
           }
