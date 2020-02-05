@@ -12,15 +12,19 @@ import {
 import GoodsList from "./list/GoodsList";
 
 
-function GoodsContainer(props: any) {
+function GoodsContainer(props:any) {
   return (
-    <BrowserRouter basename="/goods">
-      <RouterSwitch>
-        <Route path="/list" component={GoodsList} />
-        <Route path="/add"/>
-        <Redirect to="/list"/>
-      </RouterSwitch>
-    </BrowserRouter>
+    // <BrowserRouter basename="/goods">
+    //   <RouterSwitch>
+    //     <Route path="/list" component={GoodsList} />
+    //     <Route path="/add"/>
+    //     <Redirect to="/list"/>
+    //   </RouterSwitch>
+    // </BrowserRouter>
+    <div>
+      <h2>xxx</h2>
+      {props.children}
+    </div>
   );
 }
 

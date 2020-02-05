@@ -8,7 +8,7 @@ import { Table } from 'antd';
 const { Column } = Table;
 
 
-function GoodsList(props:any) {
+function GoodsList() {
   let data: object[] = [];
 
   return(
@@ -18,13 +18,13 @@ function GoodsList(props:any) {
         onBack={() => window.history.back()}
         title="商品列表"
         extra={[
-          <Button key="1" size={"large"} type="primary" href={"add"}>
+          <Button key="addBtn" size={"large"} type="primary" href={"add"}>
             录入商品
           </Button>,
         ]}
       >
       </PageHeader>
-      <div>
+      <div className={"ContentContainer"}>
         <Table dataSource={data}>
           <Column title={"商品编号"} dataIndex={"goodsNumber"} sorter={true}/>
         </Table>

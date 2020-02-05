@@ -18,11 +18,11 @@ function SideMenu(props: any) {
   // console.log(path);
   // console.log(path[1] !== undefined);
   const selectedKey: string[] = (path[1] !== undefined && path[1] !== '') ? [path[0] + '_' + path[1]]
-    : ((path[0] === 'home' || path[0] === '') ? ['home'] : ['']);
+    :  ['home'];
   const openKey: string[] = selectedKey[0] === 'home' ? ['orders'] : [path[0]];
   // const openKey: string[] = (path[0] !== undefined && path[0] === 'home') ? ['orders'] : [path[0]];
-  // console.log("selectedKey: "+selectedKey);
-  // console.log("openKey: "+openKey);
+  console.log("selectedKey: "+selectedKey);
+  console.log("openKey: "+openKey);
 
   return (
     <div className="SideMenu">

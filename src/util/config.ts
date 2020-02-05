@@ -7,11 +7,16 @@
 //   '' :  // 生产
 //   '';   // 产品
 
+/**
+ * 环境
+ */
 const BASE_URL:any = process.env.REACT_APP_BASE_URL;
 
 const API_URL:any = process.env.REACT_APP_API_URL;
 
-export const BaseParam = {
+const BaseParam = {
   BASE_URL: BASE_URL,
   API_URL: API_URL
 };
+
+export { BaseParam };
