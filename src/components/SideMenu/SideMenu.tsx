@@ -37,14 +37,14 @@ function SideMenu(props: any) {
         setOpenKeys(openKeys);
       }
     }
-    console.log("selectedKey: "+selectedKey);
-    console.log("openKey: ");
-    console.log(openKeys);
+    // console.log("selectedKey: "+selectedKey);
+    // console.log("openKey: ");
+    // console.log(openKeys);
   }, [props.location.pathname, openKeys, selectedKey]);
 
   // 处理二级菜单项打开事件
   const handleOpenChange = (openKeys: string[]) => {
-    console.log(openKeys);
+    // console.log(openKeys);
     setOpenKeys(openKeys);
   };
 
@@ -52,13 +52,9 @@ function SideMenu(props: any) {
   return (
     <div className="SideMenu">
       <Menu
-        // defaultSelectedKeys={selectedKey}
-        // defaultOpenKeys={openKey}
         selectedKeys={[selectedKey]}
         openKeys={openKeys}
         onOpenChange={handleOpenChange}
-        // defaultSelectedKeys={[selectedKey]}
-        // defaultOpenKeys={openKeys}
         mode="inline"
       >
         <Menu.Item key="home">
