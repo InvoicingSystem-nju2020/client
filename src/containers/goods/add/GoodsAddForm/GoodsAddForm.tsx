@@ -1,41 +1,29 @@
 import React from "react";
 
-import { Form, Input, AutoComplete } from "antd";
-import {FormComponentProps} from "antd/es/form";
+import { Form, Input, AutoComplete, Button } from "antd";
 
-import {FormItemLayout, FormInputSize, Regex} from "../../../../util/ComponentsUtil";
+import { FormItemLayout, FormInputSize, Regex } from "../../../../util/ComponentsUtil";
 
+// 自定义接口
+// import {GoodsAddFormData} from "../../../../api/data";
 
-// interface GoodsAddFormProps extends FormComponentProps {
-//   goodsName: string;
-//   abbreviation: string;
-//   brand: string;
-//   model: string;
-//   goodsNo: string;
-//   material: string;
-//   colour: string;
-//   type: string;
-//   specifications: string;
-//   unit: string;
-//   weight: string;
-//   retailPrice: number;
-//   placeOfProduction: string;
-//   qualityGuaranteePeriod: number;
-//   remarks: string;
-// }
 
 // function GoodsAddForm<GoodsAddFormProps>(props:any) {
-// const GoodsAddForm : React.FC<GoodsAddFormProps> = (props) => {
-const GoodsAddForm : React.FC = (props:any) => {
+const GoodsAddForm: React.FC = (props: any) => {
   const { getFieldDecorator } = props.form;
 
   // 自动补全的dataSource
-  let types:string[] = ['网球拍', '羽球拍'];
-  let units:string[] = ['支', '个'];
+  let types: string[] = ['网球拍', '羽球拍'];
+  let units: string[] = ['支', '个'];
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    console.log("submit");
+    e.preventDefault();
+  }
 
   return (
     // <Form className={"Form"} {...formItemLayout}>
-    <Form className={"Form"} {...FormItemLayout}>
+    <Form className={"Form"} {...FormItemLayout} onSubmit={handleSubmit}>
       <Form.Item
         label={"商品名"}
         hasFeedback
@@ -47,7 +35,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品名'
             }
           ]
-        })(<Input id={"goodsName"} name={"goodsName"} size={FormInputSize}/>)}
+        })(<Input id={"goodsName"} name={"goodsName"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"简称"}
@@ -60,7 +48,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品简称'
             }
           ]
-        })(<Input id={"abbreviation"} name={"abbreviation"} size={FormInputSize}/>)}
+        })(<Input id={"abbreviation"} name={"abbreviation"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"品牌"}
@@ -73,7 +61,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的品牌'
             }
           ]
-        })(<Input id={"brand"} name={"brand"} size={FormInputSize}/>)}
+        })(<Input id={"brand"} name={"brand"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"型号"}
@@ -86,7 +74,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的型号'
             }
           ]
-        })(<Input id={"model"} name={"model"} size={FormInputSize}/>)}
+        })(<Input id={"model"} name={"model"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"货号"}
@@ -99,7 +87,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的货号'
             }
           ]
-        })(<Input id={"goodsNo"} name={"goodsNo"} size={FormInputSize}/>)}
+        })(<Input id={"goodsNo"} name={"goodsNo"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"材料"}
@@ -112,7 +100,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的材料'
             }
           ]
-        })(<Input id={"material"} name={"material"} size={FormInputSize}/>)}
+        })(<Input id={"material"} name={"material"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"颜色"}
@@ -125,7 +113,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的颜色'
             }
           ]
-        })(<Input id={"colour"} name={"colour"} size={FormInputSize}/>)}
+        })(<Input id={"colour"} name={"colour"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"种类"}
@@ -139,8 +127,8 @@ const GoodsAddForm : React.FC = (props:any) => {
             }
           ]
         })(<AutoComplete dataSource={types} size={FormInputSize} backfill={true}>
-            <Input id={"type"} name={"type"}/>
-          </AutoComplete>)}
+          <Input id={"type"} name={"type"} />
+        </AutoComplete>)}
       </Form.Item>
       <Form.Item
         label={"规格"}
@@ -153,7 +141,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的规格'
             }
           ]
-        })(<Input id={"specifications"} name={"specifications"} size={FormInputSize}/>)}
+        })(<Input id={"specifications"} name={"specifications"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"单位"}
@@ -167,7 +155,7 @@ const GoodsAddForm : React.FC = (props:any) => {
             }
           ]
         })(<AutoComplete dataSource={units} size={FormInputSize} backfill={true}>
-          <Input id={"unit"} name={"unit"}/>
+          <Input id={"unit"} name={"unit"} />
         </AutoComplete>)}
       </Form.Item>
       <Form.Item
@@ -185,7 +173,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入正确格式的商品重量，例如315G，单位g、G、kg、KG、t、T、克、千克、吨'
             }
           ]
-        })(<Input id={"weight"} name={"weight"} size={FormInputSize}/>)}
+        })(<Input id={"weight"} name={"weight"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"零售价"}
@@ -199,8 +187,9 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的零售价'
             },
             {
-              transform: (value:string) => {
-                return parseFloat(value)},
+              transform: (value: string) => {
+                return parseFloat(value)
+              },
               type: 'number',
               min: 0,
               message: '请输入正确的商品零售价，>0'
@@ -210,7 +199,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入正确格式的商品零售价，例如50、100.52'
             },
           ]
-        })(<Input type={"number"} id={"retailPrice"} name={"retailPrice"} size={FormInputSize}/>)}
+        })(<Input type={"number"} id={"retailPrice"} name={"retailPrice"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"产地"}
@@ -223,7 +212,7 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的产地'
             }
           ]
-        })(<Input id={"placeOfProduction"} name={"placeOfProduction"} size={FormInputSize}/>)}
+        })(<Input id={"placeOfProduction"} name={"placeOfProduction"} size={FormInputSize} />)}
       </Form.Item>
       <Form.Item
         label={"保质期/月"}
@@ -237,8 +226,9 @@ const GoodsAddForm : React.FC = (props:any) => {
               message: '请输入商品的保质期/月'
             },
             {
-              transform: (value:string) => {
-                return parseInt(value)},
+              transform: (value: string) => {
+                return parseInt(value)
+              },
               type: 'number',
               min: 0,
               message: '请输入正确的保质期/月'
@@ -262,11 +252,16 @@ const GoodsAddForm : React.FC = (props:any) => {
           placeholder={"可不填"}
         />
       </Form.Item>
+      <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
+        <Button type="primary" htmlType="submit" size="large">
+          确认
+        </Button>
+      </Form.Item>
     </Form>
   );
 }
 
 // export default Form.create<GoodsAddFormProps>(
 export default Form.create(
-  {name: 'GoodsAdd'}
-  )(GoodsAddForm);
+  { name: 'GoodsAdd' }
+)(GoodsAddForm);
