@@ -3,7 +3,7 @@ import { BaseParam } from '../../util/config';
 // import SVG_ICONS from '../../components/SvgIcon/SvgIcon'
 import { Icon_OrdersManage, Icon_PurchaseManage, Icon_CustomerManage, Icon_SuppliersManage } from '../SvgIcon/SvgIcon'
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { Menu, Icon } from 'antd';
 import { Link, withRouter } from 'react-router-dom';
 
@@ -14,26 +14,56 @@ const { SubMenu } = Menu;
 
 function SideMenu(props: any) {
   // 根据URL判断选中的导航栏项
-  let path: string[] = props.location.pathname.substring(BaseParam.BASE_URL.length).split('/');
-  // console.log(path);
-  // console.log(path[1] !== undefined);
-  const selectedKey: string[] = (path[1] !== undefined && path[1] !== '') ? [path[0] + '_' + path[1]]
-    :  ['home'];
-  const openKey: string[] = selectedKey[0] === 'home' ? ['orders'] : [path[0]];
-  // const openKey: string[] = (path[0] !== undefined && path[0] === 'home') ? ['orders'] : [path[0]];
-  console.log("selectedKey: "+selectedKey);
-  console.log("openKey: "+openKey);
+  const [selectedKey, setSelectedKey] = useState<string>('');
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
+  // 判断URL的Effect
+  useEffect(() => {
+    // 分割取出两段path
+    let path: string[] = props.location.pathname.substring(BaseParam.BASE_URL.length).split('/');
+    // 判断并选中菜单项
+    if(path[1] !== undefined && path[1] !== '') {   // 由地址指定了具体菜单项
+      setSelectedKey(path[0] + '_' + path[1]);
+    }
+    else {    // 地址未指定，则默认选中home
+      setSelectedKey('home');
+    }
+    // 判断地址上需要打开的二级菜单
+    if(openKeys.length === 0 && (path[1] === undefined || path[1] === '' || path[0] === '')) {    // 地址上未指定，则默认打开orders
+      setOpenKeys(['orders']);
+    }
+    else {    // 地址上指定了二级菜单，判断是否已打开然后打开
+      if(!openKeys.includes(path[0])){
+        openKeys.push(path[0]);
+        setOpenKeys(openKeys);
+      }
+    }
+    console.log("selectedKey: "+selectedKey);
+    console.log("openKey: ");
+    console.log(openKeys);
+  }, [props.location.pathname, openKeys, selectedKey]);
+
+  // 处理二级菜单项打开事件
+  const handleOpenChange = (openKeys: string[]) => {
+    console.log(openKeys);
+    setOpenKeys(openKeys);
+  };
+
 
   return (
     <div className="SideMenu">
       <Menu
-        defaultSelectedKeys={selectedKey}
-        defaultOpenKeys={openKey}
+        // defaultSelectedKeys={selectedKey}
+        // defaultOpenKeys={openKey}
+        selectedKeys={[selectedKey]}
+        openKeys={openKeys}
+        onOpenChange={handleOpenChange}
+        // defaultSelectedKeys={[selectedKey]}
+        // defaultOpenKeys={openKeys}
         mode="inline"
       >
         <Menu.Item key="home">
           <Link to="/">
-            <Icon type="home" />
+            <Icon type="home"/>
             <span>主页</span>
           </Link>
         </Menu.Item>
