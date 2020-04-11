@@ -4,7 +4,9 @@ import { BaseParam } from '../../util/config';
 import { Icon_OrdersManage, Icon_PurchaseManage, Icon_CustomerManage, Icon_SuppliersManage } from '../SvgIcon/SvgIcon'
 
 import React, {useEffect, useState} from 'react';
-import { Menu, Icon } from 'antd';
+import { Menu } from 'antd';
+import Icon from '@ant-design/icons';
+import { HomeOutlined, ShoppingOutlined, PieChartOutlined } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
 
 import './SideMenu.css'
@@ -59,7 +61,7 @@ function SideMenu(props: any) {
       >
         <Menu.Item key="home">
           <Link to="/">
-            <Icon type="home"/>
+            <HomeOutlined />
             <span>主页</span>
           </Link>
         </Menu.Item>
@@ -92,7 +94,7 @@ function SideMenu(props: any) {
           key="goods"
           title={
             <span>
-              <Icon type="shopping" />
+              <ShoppingOutlined />
               <span>商品管理</span>
             </span>
           }
@@ -128,7 +130,7 @@ function SideMenu(props: any) {
           key="statistics"
           title={
             <span>
-              <Icon type="pie-chart" />
+              <PieChartOutlined />
               <span>数据分析</span>
             </span>
           }
