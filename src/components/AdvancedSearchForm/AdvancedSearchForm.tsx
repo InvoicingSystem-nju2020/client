@@ -6,11 +6,23 @@ import { DownOutlined, UpOutlined } from '@ant-design/icons';
 import './AdvancedSearchForm.css'
 
 
-interface Condition {
+/**
+ * 搜索条件
+ * label: 标签名
+ * name: 条件的属性名
+ * example: {label: '商品名称', name: 'goodsName'}
+ */
+class Condition {
   label:string;
   name:string;
+
+  constructor(label: string, name: string) {
+    this.label = label;
+    this.name = name;
+  }
 }
 
+// 搜索表单布局
 const AdvancedSearchFormItemLayout = {
   labelCol: {
     xs: {span: 24},
@@ -19,6 +31,11 @@ const AdvancedSearchFormItemLayout = {
 };
 
 
+/**
+ * 高级搜索表单
+ * @conditions: Condition[], 普通条件
+ * @priceConditions: Condition[], 价格条件
+ */
 const AdvancedSearchForm = (props:any) => {
   let conditions:Condition[] = props.conditions;
   let priceConditions:Condition[] = props.priceConditions ? props.priceConditions : [];
@@ -29,7 +46,6 @@ const AdvancedSearchForm = (props:any) => {
   // 渲染搜索条件
   const getFields = () => {
     let count = expand ? conditions.length : 6;
-    console.log('len:' + conditions.length);
     const children = [];
     for (let i = 0; i < count; i++) {
       let condition = conditions[i];
@@ -104,4 +120,4 @@ const AdvancedSearchForm = (props:any) => {
   );
 };
 
-export default AdvancedSearchForm;
+export {AdvancedSearchForm, Condition};
