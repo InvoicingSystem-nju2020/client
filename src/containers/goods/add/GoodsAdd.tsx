@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader} from "antd";
+import {Button, InputNumber, Input, AutoComplete, PageHeader, Select } from "antd";
 import { Form } from "antd";
 
 import { FormItemLayout, FormInputSize, Regex } from "../../../util/ComponentsUtil";
@@ -9,6 +9,7 @@ import {GoodsAddFormData} from "../../../api/data";
 //自定义组件
 // import GoodsAddForm from "./GoodsAddForm/GoodsAddForm";
 
+const { Option } = Select;
 
 function GoodsAdd(props: any) {
   const [form] = Form.useForm();
@@ -195,22 +196,58 @@ function GoodsAdd(props: any) {
               <Input />
             </AutoComplete>
           </Form.Item>
+          {/*<Form.Item*/}
+          {/*  label={"重量"}*/}
+          {/*  name={"weight"}*/}
+          {/*  hasFeedback*/}
+          {/*  rules={[*/}
+          {/*    {*/}
+          {/*      required: true,*/}
+          {/*      message: '请输入商品的重量'*/}
+          {/*    },*/}
+          {/*    {*/}
+          {/*      pattern: Regex.weight,*/}
+          {/*      message: '请输入正确格式的商品重量，例如315G，单位g、G、kg、KG、t、T、克、千克、吨'*/}
+          {/*    }*/}
+          {/*  ]}*/}
+          {/*>*/}
+          {/*  <Input />*/}
+          {/*</Form.Item>*/}
           <Form.Item
             label={"重量"}
-            name={"weight"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入商品的重量'
-              },
-              {
-                pattern: Regex.weight,
-                message: '请输入正确格式的商品重量，例如315G，单位g、G、kg、KG、t、T、克、千克、吨'
-              }
-            ]}
           >
-            <Input />
+            <Input.Group compact>
+              <Form.Item
+                name={'weightNum'}
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    message: '请输入商品的重量'
+                  },
+                  {
+                    type: 'number',
+                    min: 0,
+                    message: '请输入正确的商品重量，>0'
+                  }
+                ]}
+                noStyle
+              >
+                <InputNumber
+                  min={0}
+                />
+              </Form.Item>
+              <Form.Item
+                name={'weightUnit'}
+                noStyle
+              >
+                <Select defaultValue={'g'}>
+                  <Option value={'g'}>g</Option>
+                  <Option value={'kg'}>kg</Option>
+                  <Option value={'t'}>t</Option>
+                </Select>
+              </Form.Item>
+            </Input.Group>
           </Form.Item>
           <Form.Item
             label={"零售价"}
