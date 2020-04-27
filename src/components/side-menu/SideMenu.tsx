@@ -78,7 +78,7 @@ function SideMenu(props: any) {
           <Menu.Item key="orders_add"><Link to="/orders/add">录入订单</Link></Menu.Item>
         </SubMenu>
         <SubMenu
-          key="purchase"
+          key="purchase-records"
           title={
             <span>
               <Icon component={Icon_PurchaseManage} />
@@ -86,8 +86,8 @@ function SideMenu(props: any) {
             </span>
           }
         >
-          <Menu.Item key="purchase_list"><Link to="/purchase/list">进货记录列表</Link></Menu.Item>
-          <Menu.Item key="purchase_add"><Link to="/purchase/add">录入进货记录</Link></Menu.Item>
+          <Menu.Item key="purchase-records_list"><Link to="/purchase-records/list">进货记录列表</Link></Menu.Item>
+          <Menu.Item key="purchase-records_add"><Link to="/purchase-records/add">录入进货记录</Link></Menu.Item>
           <Menu.Item key="111">查看进货统计</Menu.Item>
         </SubMenu>
         <SubMenu
