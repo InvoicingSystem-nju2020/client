@@ -4,7 +4,7 @@ import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
 import { Table } from 'antd';
 import { EditOutlined, AccountBookOutlined } from '@ant-design/icons';
 
-import {AdvancedSearchForm, Condition} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
+import {AdvancedSearchForm} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
 import {Link} from "react-router-dom";
 
 // 表格列
@@ -38,19 +38,50 @@ class ClientsInfo {
 }
 
 // 搜索条件
-const conditions:Condition[] = [
-  {label:'客户编号', name:'clientsNumber'}, {label:'客户名称', name: 'clientsName'}, {label:'类型', name: 'clientsType'},
-  {label:'联系人', name:'clientsContact'}, {label:'联系方式', name: 'contactInformation'}, {label:'邮箱', name: 'mail'},
+const conditions = [
+  <Form.Item
+    name='clientsNumber'
+    label='客户编号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='clientsName'
+    label='客户名称'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='clientsType'
+    label='类型'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='clientsContact'
+    label='联系人'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='contactInformation'
+    label='联系方式'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='mail'
+    label='邮箱'
+  >
+    <Input />
+  </Form.Item>
 ];
-const priceConditions:Condition[] = [];
 
 
 function ClientsList() {
   let [data, setData] = useState<ClientsInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
-  let brands: string[] = ['李宁', 'victor'];   // 所有品牌
-  let types: string[] = ['球拍', '球类'];   // 所有商品种类
-  let placesOfProduction: string[] = ['中国', '日本'];   // 所有商品种类
+  let types: string[] = ['团购', '批发'];   // 所有商品种类
 
   let pageSize: number = 20;
 
@@ -87,7 +118,7 @@ function ClientsList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions} priceConditions={priceConditions}/>
+          <AdvancedSearchForm conditions={conditions}/>
         </div>
         <Table dataSource={data} rowKey={'clientsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}

@@ -4,7 +4,7 @@ import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
 import { Table } from 'antd';
 import { EditOutlined, AccountBookOutlined } from '@ant-design/icons';
 
-import {AdvancedSearchForm, Condition} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
+import {AdvancedSearchForm} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
 import {Link} from "react-router-dom";
 
 // 表格列
@@ -40,11 +40,50 @@ class SuppliersInfo {
 }
 
 // 搜索条件
-const conditions:Condition[] = [
-  {label:'编号', name:'suppliersNumber'}, {label:'名称', name: 'suppliersName'},
-  {label:'生产类别', name: 'productionCategory'}, {label:'采购类别', name:'purchasingCategories'}
+const conditions = [
+  <Form.Item
+    name='suppliersNumber'
+    label='编号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='suppliersName'
+    label='名称'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='productionCategory'
+    label='生产类别'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='purchasingCategories'
+    label='采购类别'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='contact'
+    label='联系人'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='contactInformation'
+    label='联系方式'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='mail'
+    label='邮箱'
+  >
+    <Input />
+  </Form.Item>
 ];
-const priceConditions:Condition[] = [];
 
 
 function SuppliersList() {
@@ -86,9 +125,9 @@ function SuppliersList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions} priceConditions={priceConditions}/>
+          <AdvancedSearchForm conditions={conditions}/>
         </div>
-        <Table dataSource={data} rowKey={'clientsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'suppliersNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
                // expandable={{
                //   expandedRowRender: info =>

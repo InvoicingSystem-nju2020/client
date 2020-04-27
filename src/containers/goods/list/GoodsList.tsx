@@ -4,7 +4,7 @@ import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
 import { Table } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
-import {AdvancedSearchForm, Condition} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
+import {AdvancedSearchForm} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
 import {Link} from "react-router-dom";
 
 // 表格列
@@ -54,15 +54,82 @@ class GoodsInfo {
 }
 
 // 搜索条件
-const conditions:Condition[] = [
-  {label:'商品编号', name:'goodsNumber'}, {label:'名称', name: 'name'}, {label:'简称', name: 'abbreviation'},
-  {label:'品牌', name:'brand'}, {label:'型号', name: 'model'}, {label:'货号', name: 'goodsNo'},
-  {label:'材料', name:'material'}, {label:'颜色', name: 'colour'}, {label:'种类', name: 'type'},
-  {label:'产地', name:'placeOfProduction'}
+const conditions = [
+  <Form.Item
+    name='clientsNumber'
+    label='商品编号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='clientsName'
+    label='名称'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='abbreviation'
+    label='简称'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='brand'
+    label='品牌'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='model'
+    label='型号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='goodsNo'
+    label='货号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='material'
+    label='材料'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='colour'
+    label='颜色'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='type'
+    label='种类'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='placeOfProduction'
+    label='产地'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='goodsNo'
+    label='货号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    label='售价'
+  >
+    <Input.Group compact>
+      <Input name={'minPrice'} placeholder={'最低价格'} style={{width:'50%'}}/>
+      <Input name={'maxPrice'} placeholder={'最高价格'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>
 ];
-const priceConditions:Condition[] = [
-  {label:'售价', name:'price'}
-]
 
 
 function GoodsList() {
@@ -107,7 +174,7 @@ function GoodsList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions} priceConditions={priceConditions}/>
+          <AdvancedSearchForm conditions={conditions}/>
         </div>
         <Table dataSource={data} rowKey={'goodsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
