@@ -11,7 +11,7 @@ import {Link} from "react-router-dom";
 const { Column } = Table;
 
 // 商品信息
-class ClientsInfo {
+class ClientInfo {
   clientsNumber: string
   clientsName: string
   clientsType: string
@@ -79,7 +79,7 @@ const conditions = [
 
 
 function ClientsList() {
-  let [data, setData] = useState<ClientsInfo[]>([]) ;  // dataSource数组
+  let [data, setData] = useState<ClientInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
   let types: string[] = ['团购', '批发'];   // 所有商品种类
 
@@ -87,8 +87,8 @@ function ClientsList() {
 
   // 获取商品列表
   function getClientsList() {
-    let temp:ClientsInfo[] = [
-      new ClientsInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
+    let temp:ClientInfo[] = [
+      new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
     ];
     setData(temp);
     setLoading(false);

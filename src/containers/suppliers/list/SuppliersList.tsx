@@ -11,7 +11,7 @@ import {Link} from "react-router-dom";
 const { Column } = Table;
 
 // 商品信息
-class SuppliersInfo {
+class SupplierInfo {
   suppliersNumber: string
   suppliersName: string
   contactInformation: string
@@ -87,15 +87,15 @@ const conditions = [
 
 
 function SuppliersList() {
-  let [data, setData] = useState<SuppliersInfo[]>([]) ;  // dataSource数组
+  let [data, setData] = useState<SupplierInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
 
   let pageSize: number = 20;
 
   // 获取商品列表
   function getSuppliersList() {
-    let temp:SuppliersInfo[] = [
-      new SuppliersInfo('LINING', '李宁（北京）体育用品有限公司', '18000000000', '一般合作商', '运动鞋服、体育器材', '羽球系列', '李宁', '陈叶', '男', '区域经理', 'xxx@a.com')
+    let temp:SupplierInfo[] = [
+      new SupplierInfo('LINING', '李宁（北京）体育用品有限公司', '18000000000', '一般合作商', '运动鞋服、体育器材', '羽球系列', '李宁', '陈叶', '男', '区域经理', 'xxx@a.com')
     ];
     setData(temp);
     setLoading(false);
@@ -129,35 +129,6 @@ function SuppliersList() {
         </div>
         <Table dataSource={data} rowKey={'suppliersNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
-               // expandable={{
-               //   expandedRowRender: info =>
-               //     <Row>
-               //       <Col xs={24} sm={8}>
-               //         <Row gutter={18}>
-               //           <Col><b>材料:</b> </Col>
-               //           <Col>{info.material}</Col>
-               //         </Row>
-               //       </Col>
-               //       <Col xs={24} sm={8}>
-               //         <Row gutter={18}>
-               //           <Col><b>规格:</b> </Col>
-               //           <Col>{info.specifications}</Col>
-               //         </Row>
-               //       </Col>
-               //       <Col xs={24} sm={8}>
-               //         <Row gutter={18}>
-               //           <Col><b>单位:</b> </Col>
-               //           <Col>{info.unit}</Col>
-               //         </Row>
-               //       </Col>
-               //       <Col xs={24} sm={24}>
-               //         <Row gutter={18}>
-               //           <Col><b>备注:</b> </Col>
-               //           <Col>{info.remarks === '' ? '无' : info.remarks}</Col>
-               //         </Row>
-               //       </Col>
-               //     </Row>
-               // }}
         >
           <Column title={"供应商编号"} dataIndex={"suppliersNumber"} sorter={true}/>
           <Column title={"名称"} dataIndex={"suppliersName"} sorter={true}/>
