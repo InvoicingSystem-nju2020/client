@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, Col, Form, Input, InputNumber, Row} from "antd";
-import { DownOutlined, UpOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined, SearchOutlined } from '@ant-design/icons';
 
 // CSS
 import './AdvancedSearchForm.css'
@@ -30,6 +30,8 @@ const AdvancedSearchFormItemLayout = {
   }
 };
 
+// 默认显示的搜索条件个数
+const DEFAULT_CONDITIONS_NUM = 6;
 
 /**
  * 高级搜索表单
@@ -40,12 +42,14 @@ const AdvancedSearchForm = (props:any) => {
   let conditions:Condition[] = props.conditions;
   let priceConditions:Condition[] = props.priceConditions ? props.priceConditions : [];
 
+  const needExpand:boolean = (conditions.length + priceConditions.length) > DEFAULT_CONDITIONS_NUM;
   const [expand, setExpand] = useState(false);
   const [form] = Form.useForm();
 
   // 渲染搜索条件
   const getFields = () => {
-    let count = expand ? conditions.length : 6;
+    // 不需要扩展时 || 需要且展开状态 时全部显示
+    let count = (!needExpand || expand ) ? conditions.length : DEFAULT_CONDITIONS_NUM;
     const children = [];
     for (let i = 0; i < count; i++) {
       let condition = conditions[i];
@@ -96,7 +100,7 @@ const AdvancedSearchForm = (props:any) => {
       <Row>
         <Col span={24} style={{ textAlign: 'right' }}>
           <Button type="primary" htmlType="submit">
-            搜索
+            <SearchOutlined />搜索
           </Button>
           <Button
             style={{ margin: '0 8px' }}
@@ -112,7 +116,9 @@ const AdvancedSearchForm = (props:any) => {
               setExpand(!expand);
             }}
           >
-            {expand ? <UpOutlined /> : <DownOutlined />} {expand ? '收起' : '展开'}
+            { needExpand ?
+              <span>{expand ? <UpOutlined /> : <DownOutlined />} {expand ? '收起' : '展开'}</span>
+              : <span></span>}
           </a>
         </Col>
       </Row>

@@ -19,6 +19,10 @@ import SideMenu from '../../components/SideMenu/SideMenu';
 // import GoodsContainer from "../goods/GoodsContainer";
 import GoodsList from "../goods/list/GoodsList";
 import GoodsAdd from "../goods/add/GoodsAdd";
+import ClientsList from "../clients/list/ClientsList";
+import ClientsAdd from "../clients/add/ClientsAdd";
+import SuppliersList from "../suppliers/list/SuppliersList";
+import SuppliersAdd from "../suppliers/add/SuppliersAdd";
 
 
 const { Content, Sider } = Layout;
@@ -52,8 +56,20 @@ const App: React.FC = () => {
                     <Redirect to="/goods/list"/>
                   </RouterSwitch>
                 </Route>
-                <Route path="/customers">customers</Route>
-                <Route path="/suppliers">suppliers</Route>
+                <Route path="/clients">
+                  <RouterSwitch>
+                    <Route path="/clients/list" component={ClientsList}/>
+                    <Route path="/clients/add" component={ClientsAdd}/>
+                    <Redirect to="/clients/list"/>
+                  </RouterSwitch>
+                </Route>
+                <Route path="/suppliers">
+                  <RouterSwitch>
+                    <Route path="/suppliers/list" component={SuppliersList}/>
+                    <Route path="/suppliers/add" component={SuppliersAdd}/>
+                    <Redirect to="/suppliers/list"/>
+                  </RouterSwitch>
+                </Route>
                 <Route path="/statistics">statistics</Route>
                 <Route path="/" exact>home</Route>
                 <Redirect to="/"/>

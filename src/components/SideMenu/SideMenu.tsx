@@ -1,7 +1,7 @@
 import { BaseParam } from '../../util/config';
 
 // import SVG_ICONS from '../../components/SvgIcon/SvgIcon'
-import { Icon_OrdersManage, Icon_PurchaseManage, Icon_CustomerManage, Icon_SuppliersManage } from '../SvgIcon/SvgIcon'
+import { Icon_OrdersManage, Icon_PurchaseManage, Icon_ClientsManage, Icon_SuppliersManage } from '../SvgIcon/SvgIcon'
 
 import React, {useEffect, useState} from 'react';
 import { Menu } from 'antd';
@@ -103,16 +103,16 @@ function SideMenu(props: any) {
           <Menu.Item key="goods_add"><Link to="/goods/add">录入商品</Link></Menu.Item>
         </SubMenu>
         <SubMenu
-          key="customers"
+          key="clients"
           title={
             <span>
-              <Icon component={Icon_CustomerManage} />
+              <Icon component={Icon_ClientsManage} />
               <span>客户管理</span>
             </span>
           }
         >
-          <Menu.Item key="customers_list"><Link to="/customers/list">客户列表</Link></Menu.Item>
-          <Menu.Item key="customers_add"><Link to="/customers/add">录入客户</Link></Menu.Item>
+          <Menu.Item key="clients_list"><Link to="/clients/list">客户列表</Link></Menu.Item>
+          <Menu.Item key="clients_add"><Link to="/clients/add">录入客户</Link></Menu.Item>
         </SubMenu>
         <SubMenu
           key="suppliers"
