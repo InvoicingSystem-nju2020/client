@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 
-import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, InputNumber} from 'antd';
 import { Table } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
@@ -125,8 +125,8 @@ const conditions = [
     label='售价'
   >
     <Input.Group compact>
-      <Input name={'minPrice'} placeholder={'最低价格'} style={{width:'50%'}}/>
-      <Input name={'maxPrice'} placeholder={'最高价格'} style={{width:'50%'}}/>
+      <InputNumber name={'minPrice'} placeholder={'最低价格'} style={{width:'50%'}}/>
+      <InputNumber name={'maxPrice'} placeholder={'最高价格'} style={{width:'50%'}}/>
     </Input.Group>
   </Form.Item>
 ];
