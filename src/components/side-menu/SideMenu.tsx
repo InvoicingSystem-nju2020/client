@@ -1,7 +1,7 @@
 import { BaseParam } from '../../util/config';
 
-// import SVG_ICONS from '../../components/SvgIcon/SvgIcon'
-import { Icon_OrdersManage, Icon_PurchaseManage, Icon_ClientsManage, Icon_SuppliersManage } from '../SvgIcon/SvgIcon'
+// import SVG_ICONS from '../../components/svg-icon/svg-icon'
+import { Icon_OrdersManage, Icon_PurchaseManage, Icon_ClientsManage, Icon_SuppliersManage } from '../svg-icon/SvgIcon'
 
 import React, {useEffect, useState} from 'react';
 import { Menu } from 'antd';

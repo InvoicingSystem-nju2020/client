@@ -13,7 +13,7 @@ import { Layout } from 'antd';
 import './App.css';
 
 // 自定义公共组件
-import SideMenu from '../../components/SideMenu/SideMenu';
+import SideMenu from '../../components/side-menu/SideMenu';
 
 // 容器
 // import GoodsContainer from "../goods/GoodsContainer";

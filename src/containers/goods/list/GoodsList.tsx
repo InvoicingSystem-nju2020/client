@@ -4,7 +4,7 @@ import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
 import { Table } from 'antd';
 import { EditOutlined } from '@ant-design/icons';
 
-import {AdvancedSearchForm} from "../../../components/AdvancedSearchForm/AdvancedSearchForm";
+import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
 
 // 表格列
