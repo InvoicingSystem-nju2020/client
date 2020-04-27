@@ -1,14 +1,20 @@
 import React, {useEffect, useState} from 'react';
+import {Link} from "react-router-dom";
 
-import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, InputNumber} from 'antd';
 import { Table } from 'antd';
+import { DatePicker } from 'antd';
+import 'moment/locale/zh-cn';
+
 import { EditOutlined, AccountBookOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
-import {Link} from "react-router-dom";
+import { DateFormat } from "../../../util/ComponentsUtil";
 
 // 表格列
 const { Column } = Table;
+// 日期区间选择
+const { RangePicker } = DatePicker;
 
 // 商品信息
 class PurchaseRecordInfo {
@@ -60,40 +66,82 @@ class PurchaseRecordInfo {
 // 搜索条件
 const conditions = [
   <Form.Item
-    name='clientsNumber'
-    label='客户编号'
+    name='purchaseTime'
+    label='进货时间'
+  >
+    <RangePicker
+      allowEmpty={[true, true]}
+      format={DateFormat.dateFormat}
+      allowClear
+      style={{width: '100%', textAlign: 'center'}}
+    />
+  </Form.Item>,
+  <Form.Item
+    name='createTime'
+    label='创建时间'
+  >
+    <RangePicker
+      allowEmpty={[true, true]}
+      format={DateFormat.dateFormat}
+      allowClear
+      style={{width: '100%', textAlign: 'center'}}
+    />
+  </Form.Item>,
+  <Form.Item
+    name='goodsNumber'
+    label='商品编号'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='clientsName'
-    label='客户名称'
+    name='abbreviation'
+    label='品名'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='clientsType'
-    label='类型'
+    name='brand'
+    label='品牌'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='clientsContact'
-    label='联系人'
+    name='supplier'
+    label='供应商'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='contactInformation'
-    label='联系方式'
+    label='数量'
   >
-    <Input />
+    <Input.Group compact>
+      <InputNumber name={'minNumbers'} placeholder={'最小数量'} style={{width:'50%'}}/>
+      <InputNumber name={'maxNumbers'} placeholder={'最大数量'} style={{width:'50%'}}/>
+    </Input.Group>
   </Form.Item>,
   <Form.Item
-    name='mail'
-    label='邮箱'
+    label='零售价'
   >
-    <Input />
+    <Input.Group compact>
+      <InputNumber name={'minRetailPrice'} placeholder={'最低零售价'} style={{width:'50%'}}/>
+      <InputNumber name={'maxRetailPrice'} placeholder={'最高零售价'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='总金额'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
+      <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='折扣'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minDiscount'} placeholder={'最低折扣'} style={{width:'50%'}}/>
+      <InputNumber name={'maxDiscount'} placeholder={'最高折扣'} style={{width:'50%'}}/>
+    </Input.Group>
   </Form.Item>
 ];
 
