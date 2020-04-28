@@ -15,7 +15,8 @@ code {
 /* 通用class */
 .ContentContainer {
   height: 85vh;
-  /*overflow: auto;*/
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .Form {

@@ -23,6 +23,8 @@ import ClientsList from "../clients/list/ClientsList";
 import ClientsAdd from "../clients/add/ClientsAdd";
 import SuppliersList from "../suppliers/list/SuppliersList";
 import SuppliersAdd from "../suppliers/add/SuppliersAdd";
+import PurchaseRecordsList from "../purchase-records/list/PurchaseRecordsList";
+import PurchaseRecordsAdd from "../purchase-records/add/PurchaseRecordsAdd";
 
 
 const { Content, Sider } = Layout;
@@ -47,8 +49,13 @@ const App: React.FC = () => {
             >
               <RouterSwitch>
                 <Route path="/orders">orders</Route>
-                <Route path="/purchase">purchase</Route>
-                {/*<Route path="/goods" component={GoodsContainer}>*/}
+                <Route path="/purchase-records">
+                  <RouterSwitch>
+                    <Route path="/purchase-records/list" component={PurchaseRecordsList}/>
+                    <Route path="/purchase-records/add" component={PurchaseRecordsAdd}/>
+                    <Redirect to="/purchase-records/list"/>
+                  </RouterSwitch>
+                </Route>
                 <Route path="/goods">
                   <RouterSwitch>
                     <Route path="/goods/list" component={GoodsList}/>
