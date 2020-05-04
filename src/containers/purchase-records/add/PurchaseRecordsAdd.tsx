@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import {FormItemLayout, FormInputSize, Regex, DateFormat} from "../../../util/ComponentsUtil";
 import GoodsSearchAndShowByNumber from "../../../components/goods-search-and-show-by-number/GoodsSearchAndShowByNumber";
+import SupplierSearchAndShow from "../../../components/suppliers-search-and-show/SuppliersSearchAndShow";
 
 
 const { Option } = Select;
@@ -219,7 +220,7 @@ function PurchaseRecordsAdd(props: any) {
               placeholder={"可不填"}
             />
           </Form.Item>
-          进货商
+          <SupplierSearchAndShow/>
           <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
             <Button type="primary" htmlType="submit" size="large">
               确认

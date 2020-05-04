@@ -7,14 +7,14 @@ import {FormItemProps} from "antd/es/form";
 
 
 class GoodsInfo{
-  goodsNumber: string
-  goodsName: string
-  abbreviation: string
-  brand: string
-  model:string
-  goodsNo: string
-  material: string
-  unit: string
+  goodsNumber: string;
+  goodsName: string;
+  abbreviation: string;
+  brand: string;
+  model:string;
+  goodsNo: string;
+  material: string;
+  unit: string;
 
   constructor(goodsNumber: string, goodsName: string, abbreviation: string, brand: string, model: string, goodsNo: string, material: string, unit: string) {
     this.goodsNumber = goodsNumber;
