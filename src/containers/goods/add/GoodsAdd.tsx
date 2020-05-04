@@ -57,11 +57,7 @@ function GoodsAdd(props: any) {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer"}
-          style={{
-            padding: 24
-          }}
-        >
+        <div className={"ContentContainer ContentPadding"}>
           <Form.Item
             label={"商品名"}
             name={"goodsName"}

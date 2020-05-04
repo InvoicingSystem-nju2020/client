@@ -18,6 +18,9 @@ code {
   overflow-x: hidden;
   overflow-y: auto;
 }
+.ContentPadding {
+  padding: 24px;
+}
 
 .Form {
   text-align: left;

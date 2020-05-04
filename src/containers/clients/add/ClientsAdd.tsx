@@ -42,11 +42,7 @@ function ClientsAdd(props: any) {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer"}
-          style={{
-            padding: 24
-          }}
-        >
+        <div className={"ContentContainer ContentPadding"}>
           <Form.Item
             label={"客户编号"}
             name={"clientsNumber"}

@@ -45,11 +45,7 @@ function PurchaseRecordsAdd(props: any) {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer"}
-          style={{
-            padding: 24
-          }}
-        >
+        <div className={"ContentContainer ContentPadding"}>
           <Form.Item
             label={"进货时间"}
             name={"purchaseTime"}

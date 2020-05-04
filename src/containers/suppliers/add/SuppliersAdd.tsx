@@ -42,11 +42,7 @@ function SuppliersAdd(props: any) {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer"}
-          style={{
-            padding: 24
-          }}
-        >
+        <div className={"ContentContainer ContentPadding"}>
           <Form.Item
             label={"供应商名"}
             name={"suppliersName"}
