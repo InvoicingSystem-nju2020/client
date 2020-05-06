@@ -15,8 +15,9 @@ class GoodsInfo{
   goodsNo: string;
   material: string;
   unit: string;
+  retailPrice: number;
 
-  constructor(goodsNumber: string, goodsName: string, abbreviation: string, brand: string, model: string, goodsNo: string, material: string, unit: string) {
+  constructor(goodsNumber: string, goodsName: string, abbreviation: string, brand: string, model: string, goodsNo: string, material: string, unit: string, retailPrice: number) {
     this.goodsNumber = goodsNumber;
     this.goodsName = goodsName;
     this.abbreviation = abbreviation;
@@ -25,25 +26,28 @@ class GoodsInfo{
     this.goodsNo = goodsNo;
     this.material = material;
     this.unit = unit;
+    this.retailPrice = retailPrice;
   }
 }
 
 
-const GoodsSearchAndShowByNumber: React.FC = () => {
-  const [options, setOptions] = useState<SelectProps<object>['options']>([]);
-  const [goodsInfosResult, setGoodsInfosResult] = useState<GoodsInfo[]>([]);
-  const [selectedGoodsNumber, setSelectedGoodsNumber] = useState<string>('');
-  const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');
+const GoodsSearchAndShowByNumber = (props:any) => {
+  const [options, setOptions] = useState<SelectProps<object>['options']>([]);   // 选项
+  const [goodsInfosResult, setGoodsInfosResult] = useState<GoodsInfo[]>([]);  // 商品信息搜索结果
+  const [selectedGoodsNumber, setSelectedGoodsNumber] = useState<string>(''); // 已选择的商品编号
+  const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');  // 表单验证状态
+  const showPrice: boolean = props.showPrice ? true : false; // 是否显示价格
+
 
   // 展示搜索结果
   const searchResult = (query: string) => {
     const result = [
       new GoodsInfo('WQP00001', '室内器材',
-        '网球拍', 'wilson', 'pro staff', 'WRT74181U2', '碳纤维', '支'),
+        '网球拍', 'wilson', 'pro staff', 'WRT74181U2', '碳纤维', '支', 2480),
       new GoodsInfo('YQP00001', '室内器材',
-        '羽球拍', 'YONEX', 'VTLD-F', 'YY1032987', '碳纤维', '支'),
+        '羽球拍', 'YONEX', 'VTLD-F', 'YY1032987', '碳纤维', '支', 2400),
       new GoodsInfo('YMQ00001', '室内耗材',
-        '羽毛球', 'LINING', 'A+90', 'AYQD016-1', '鹅毛', '个')
+        '羽毛球', 'LINING', 'A+90', 'AYQD016-1', '鹅毛', '个', 112)
     ];
     setGoodsInfosResult(result);
     return result.map((item, index) => {
@@ -159,6 +163,15 @@ const GoodsSearchAndShowByNumber: React.FC = () => {
               <Col>{info.unit}</Col>
             </Row>
           </Col>
+          {
+            showPrice ?
+            <Col span={24}>
+              <Row gutter={18}>
+                <Col span={8}><b>零售价:</b> </Col>
+                <Col>{info.retailPrice}</Col>
+              </Row>
+            </Col> : ''
+          }
         </Row>
       )
     }
@@ -194,7 +207,7 @@ const GoodsSearchAndShowByNumber: React.FC = () => {
           <Input.Search size={FormInputSize} placeholder="输入商品编号搜索" />
         </AutoComplete>
       </Form.Item>
-      <Card style={{marginTop: '1rem', height: '15rem', overflow: 'auto'}}>
+      <Card style={{marginTop: '1rem', height: '16rem', overflow: 'auto'}}>
         {getAndShowGoodsInfo()}
       </Card>
     </Form.Item>
