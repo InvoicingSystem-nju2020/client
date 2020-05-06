@@ -21,6 +21,17 @@ function OrdersAdd(props: any) {
       });
   };
 
+  const onPriceAndNumChange = (changedValues:any, allValues:any) => {
+    let price = form.getFieldValue('finalPrice');
+    let num = form.getFieldValue('numbers');
+    if(price && num){
+      form.setFieldsValue({totalAmount:price*num});
+    }
+    else{
+      form.setFieldsValue({totalAmount:undefined});
+    }
+  };
+
   return (
     <div>
       <Form
@@ -28,6 +39,8 @@ function OrdersAdd(props: any) {
         className={"Form"}
         {...FormItemLayout}
         onFinish={onFinish}
+        onValuesChange={onPriceAndNumChange}
+        scrollToFirstError
         size={FormInputSize}
       >
         <PageHeader
@@ -77,6 +90,33 @@ function OrdersAdd(props: any) {
           </Form.Item>
           <GoodsSearchAndShowByNumber showPrice={true}/>
           <Form.Item
+            label={"成交价"}
+            name={"finalPrice"}
+
+            hasFeedback
+            validateFirst={true}
+            rules={[
+              {
+                required: true,
+                message: '请输入成交价'
+              },
+              {
+                type: 'number',
+                min: 0,
+                message: '请输入正确的成交价，>0'
+              },
+              {
+                pattern: Regex.price,
+                message: '请输入正确格式的成交价，例如50、100.52'
+              },
+            ]}
+          >
+            <InputNumber
+              min={0}
+              style={{width: "100%"}}
+            />
+          </Form.Item>
+          <Form.Item
             label={"数量"}
             name={"numbers"}
             hasFeedback
@@ -100,7 +140,6 @@ function OrdersAdd(props: any) {
           <Form.Item
             label={"总金额"}
             name={"totalAmount"}
-            hasFeedback
             validateFirst={true}
             rules={[
               {
