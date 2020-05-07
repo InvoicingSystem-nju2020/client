@@ -22,6 +22,21 @@ function PurchaseRecordsAdd(props: any) {
       });
   };
 
+  // 价格和数量变动时自动计算总金额
+  const onPriceAndNumChange = (changedValues:any, allValues:any) => {
+    let discount = form.getFieldValue('discount');
+    let retailPrice = form.getFieldValue('retailPrice');
+    let num = form.getFieldValue('numbers');
+    if(retailPrice && discount && num){
+      form.setFieldsValue({unitPrice:retailPrice*discount});
+      form.setFieldsValue({totalAmount:retailPrice*discount*num});
+    }
+    else{
+      form.setFieldsValue({unitPrice:undefined});
+      form.setFieldsValue({totalAmount:undefined});
+    }
+  };
+
   return (
     <div>
       <Form
@@ -29,6 +44,8 @@ function PurchaseRecordsAdd(props: any) {
         className={"Form"}
         {...FormItemLayout}
         onFinish={onFinish}
+        onValuesChange={onPriceAndNumChange}
+        scrollToFirstError
         size={FormInputSize}
       >
         <PageHeader
@@ -108,7 +125,7 @@ function PurchaseRecordsAdd(props: any) {
             />
           </Form.Item>
           <Form.Item
-            label={"数量"}
+            label={"折扣"}
             name={"discount"}
             hasFeedback
             rules={[
@@ -131,7 +148,6 @@ function PurchaseRecordsAdd(props: any) {
           <Form.Item
             label={"单价"}
             name={"unitPrice"}
-            hasFeedback
             validateFirst={true}
             rules={[
               {
@@ -157,7 +173,6 @@ function PurchaseRecordsAdd(props: any) {
           <Form.Item
             label={"金额"}
             name={"totalAmount"}
-            hasFeedback
             validateFirst={true}
             rules={[
               {
@@ -183,13 +198,6 @@ function PurchaseRecordsAdd(props: any) {
           <Form.Item
             label={"是否含税"}
             name={"taxIncluded"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入商品的零售价'
-              }
-            ]}
           >
             <Select defaultValue={'是'}>
               <Option value={'是'}>是</Option>
