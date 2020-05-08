@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import {FormItemLayout, FormInputSize, Regex, DateFormat} from "../../../util/ComponentsUtil";
 import GoodsSearchAndShowByNumber from "../../../components/goods-search-and-show-by-number/GoodsSearchAndShowByNumber";
+import ClientSearch from "../../../components/client-search/ClientsSearch";
 
 
 const { Option } = Select;
@@ -71,7 +72,7 @@ function OrdersAdd(props: any) {
           >
             <Input />
           </Form.Item>
-          客户
+          <ClientSearch/>
           <Form.Item
             label={"是否开票"}
             name={"writeAnInvoice"}
