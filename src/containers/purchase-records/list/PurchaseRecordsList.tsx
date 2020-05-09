@@ -260,7 +260,7 @@ function PurchaseRecordsList() {
           <Column title={"是否含税"} dataIndex={"taxIncluded"} sorter={true}/>
           <Column title={"供应商"} dataIndex={"supplierName"} sorter={true}/>
           <Column title={"创建时间"} dataIndex={"createTime"} sorter={true}/>
-          <Column title={""} fixed={'right'}
+          <Column title={""} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/purchase-records/edit/'+info.id}><EditOutlined /></Link> }
           />
         </Table>

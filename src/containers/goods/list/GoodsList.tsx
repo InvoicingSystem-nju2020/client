@@ -232,7 +232,7 @@ function GoodsList() {
           <Column title={"库存"} dataIndex={"stock"}/>
           <Column title={"进货价"} dataIndex={"buyingPrice"} />
           <Column title={"零售价"} dataIndex={"retailPrice"}/>
-          <Column title={""} fixed={'right'}
+          <Column title={""} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/goods/edit/'+info.goodsNumber}><EditOutlined /></Link> }
           />
         </Table>

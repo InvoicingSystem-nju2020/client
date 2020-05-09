@@ -140,7 +140,7 @@ function ClientsList() {
           <Column title={"汇款信息"} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/clients/remittance/'+info.clientsNumber}><AccountBookOutlined /></Link> }
           />
-          <Column title={""} fixed={'right'}
+          <Column title={""} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/clients/edit/'+info.clientsNumber}><EditOutlined /></Link> }
           />
         </Table>

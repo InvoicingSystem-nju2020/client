@@ -143,7 +143,7 @@ function SuppliersList() {
           <Column title={"联系方式"} dataIndex={"contactInformation"}/>
           <Column title={"邮箱"} dataIndex={"mail"}/>
           <Column title={"备注"} dataIndex={"remarks"}/>
-          <Column title={""} fixed={'right'}
+          <Column title={""} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/suppliers/edit/'+info.suppliersNumber}><EditOutlined /></Link> }
           />
         </Table>
