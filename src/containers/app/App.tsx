@@ -25,6 +25,8 @@ import SuppliersList from "../suppliers/list/SuppliersList";
 import SuppliersAdd from "../suppliers/add/SuppliersAdd";
 import PurchaseRecordsList from "../purchase-records/list/PurchaseRecordsList";
 import PurchaseRecordsAdd from "../purchase-records/add/PurchaseRecordsAdd";
+import OrdersAdd from "../orders/add/OrdersAdd";
+import OrdersList from "../orders/list/OrdersList";
 
 
 const { Content, Sider } = Layout;
@@ -48,7 +50,13 @@ const App: React.FC = () => {
               }}
             >
               <RouterSwitch>
-                <Route path="/orders">orders</Route>
+                <Route path="/orders">
+                  <RouterSwitch>
+                    <Route path="/orders/list" component={OrdersList}/>
+                    <Route path="/orders/add" component={OrdersAdd}/>
+                    <Redirect to="/orders/list"/>
+                  </RouterSwitch>
+                </Route>
                 <Route path="/purchase-records">
                   <RouterSwitch>
                     <Route path="/purchase-records/list" component={PurchaseRecordsList}/>

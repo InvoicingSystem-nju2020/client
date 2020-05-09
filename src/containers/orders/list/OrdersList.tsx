@@ -1,0 +1,345 @@
+import React, {useEffect, useState} from 'react';
+import {Link} from "react-router-dom";
+
+import {Form, Row, Col, PageHeader, Input, Button, InputNumber, Popconfirm, Select, Popover} from 'antd';
+import { Table } from 'antd';
+import { DatePicker } from 'antd';
+import 'moment/locale/zh-cn';
+
+import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+
+import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
+import { DateFormat } from "../../../util/ComponentsUtil";
+
+// 表格列
+const { Column } = Table;
+// 日期区间选择
+const { RangePicker } = DatePicker;
+
+// 商品信息
+class OrderInfo {
+  orderNumber: string;  // 订单编号
+  state: string;  // 订单状态
+  createTime: string; // 创建时间
+  dealTime: string; // 成交时间
+  clientName: string; //客户名称
+  salesPerson: string;  // 销售员
+  writeAnInvoice: number; // 是否开票
+  goodsNumber: string;  // 商品编号
+  brand: string;  // 品牌
+  goodsName: string;  // 商品名称
+  goodsNo: string;  // 货号
+  retailPrice: number; // 零售价
+  discount: number; // 折扣
+  dealPrice: number; // 成交价
+  unit: string; // 单位
+  numbers: number;  //数量
+  totalAmount: number;  // 总金额
+  typeOfPayment: string;  // 付款方式
+  typeOfShipping: string; // 运输方式
+
+  constructor(orderNumber: string, state: string, createTime: string, dealTime: string, clientName: string, salesPerson: string, writeAnInvoice: number, goodsNumber: string, brand: string, goodsName: string, goodsNo: string, retailPrice: number, discount: number, dealPrice: number, unit: string, numbers: number, totalAmount: number, typeOfPayment: string, typeOfShipping: string) {
+    this.orderNumber = orderNumber;
+    this.state = state;
+    this.createTime = createTime;
+    this.dealTime = dealTime;
+    this.clientName = clientName;
+    this.salesPerson = salesPerson;
+    this.writeAnInvoice = writeAnInvoice;
+    this.goodsNumber = goodsNumber;
+    this.brand = brand;
+    this.goodsName = goodsName;
+    this.goodsNo = goodsNo;
+    this.retailPrice = retailPrice;
+    this.discount = discount;
+    this.dealPrice = dealPrice;
+    this.unit = unit;
+    this.numbers = numbers;
+    this.totalAmount = totalAmount;
+    this.typeOfPayment = typeOfPayment;
+    this.typeOfShipping = typeOfShipping;
+  }
+}
+
+// 搜索条件
+const conditions = [
+  <Form.Item
+    name='purchaseTime'
+    label='进货时间'
+  >
+    <RangePicker
+      allowEmpty={[true, true]}
+      format={DateFormat.dateFormat}
+      allowClear
+      style={{width: '100%', textAlign: 'center'}}
+    />
+  </Form.Item>,
+  <Form.Item
+    name='createTime'
+    label='创建时间'
+  >
+    <RangePicker
+      allowEmpty={[true, true]}
+      format={DateFormat.dateFormat}
+      allowClear
+      style={{width: '100%', textAlign: 'center'}}
+    />
+  </Form.Item>,
+  <Form.Item
+    name='goodsNumber'
+    label='商品编号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='abbreviation'
+    label='品名'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='brand'
+    label='品牌'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='supplier'
+    label='供应商'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    label='数量'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minNumbers'} placeholder={'最小数量'} style={{width:'50%'}}/>
+      <InputNumber name={'maxNumbers'} placeholder={'最大数量'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='零售价'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minRetailPrice'} placeholder={'最低零售价'} style={{width:'50%'}}/>
+      <InputNumber name={'maxRetailPrice'} placeholder={'最高零售价'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='总金额'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
+      <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='折扣'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minDiscount'} placeholder={'最低折扣'} style={{width:'50%'}}/>
+      <InputNumber name={'maxDiscount'} placeholder={'最高折扣'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>
+];
+
+
+function OrdersList() {
+  let [data, setData] = useState<OrderInfo[]>([]) ;  // dataSource数组
+  let [loading, setLoading] = useState(true);
+  let types: string[] = ['团购', '批发'];   // 所有商品种类
+
+  let pageSize: number = 20;
+
+  // 获取商品列表
+  function getPurchaseRecordsList() {
+    let temp:OrderInfo[] = [
+      new OrderInfo('xx00000001', '已售', '2019/04/26',
+        '12:07', '南京海关', '张三', 1,
+        'YQP00001', 'LINING', '羽球拍', 'WRT74181U2', 2480, 0.5,
+        1240, '支', 4, 4960, '预付', '自提')
+    ];
+    setData(temp);
+    setLoading(false);
+  }
+  // 加载时获取一次商品列表
+  useEffect(() => {
+    getPurchaseRecordsList();
+  }, []);
+
+  // 处理表格变化
+  function handleTableChange (pagination:any, filters:any, sorter:any) {
+
+  }
+
+  return(
+    <div>
+      <PageHeader
+        ghost={false}
+        onBack={() => window.history.back()}
+        title="订单列表"
+        extra={[
+          <Button key="addBtn" size={"large"} type="primary" href={"add"}>
+            录入订单
+          </Button>,
+        ]}
+      >
+      </PageHeader>
+      <div className={"ContentContainer"}>
+        <div>
+          <AdvancedSearchForm conditions={conditions}/>
+        </div>
+        <Table dataSource={data} rowKey={'id'} pagination={{ pageSize: pageSize }} loading={loading}
+               onChange={handleTableChange}
+               rowSelection={{
+                 fixed: true,
+                 type: 'checkbox'
+               }}
+               expandable={{
+                 expandedRowRender: info =>
+                   <Row>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>货号:</b> </Col>
+                         <Col>{info.goodsNo}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>零售价:</b> </Col>
+                         <Col>{info.retailPrice}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>折扣:</b> </Col>
+                         <Col>{info.discount}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>成交价:</b> </Col>
+                         <Col>{info.dealPrice}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>单位:</b> </Col>
+                         <Col>{info.unit}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>数量:</b> </Col>
+                         <Col>{info.numbers}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>付款方式:</b> </Col>
+                         <Col>{info.typeOfPayment}</Col>
+                       </Row>
+                     </Col>
+                     <Col xs={24} sm={8}>
+                       <Row gutter={18}>
+                         <Col><b>运输方式:</b> </Col>
+                         <Col>{info.typeOfShipping}</Col>
+                       </Row>
+                     </Col>
+                   </Row>
+               }}
+        >
+          <Column title={"订单编号"} dataIndex={"orderNumber"} sorter={true}/>
+          <Column title={"状态"} dataIndex={"state"} sorter={true}/>
+          <Column title={"创建时间"} dataIndex={"createTime"} sorter={true}/>
+          <Column title={"成交时间"} dataIndex={"dealTime"} sorter={true}/>
+          <Column title={"客户"} dataIndex={"clientName"} sorter={true}/>
+          <Column title={"销售员"} dataIndex={"salesPerson"} sorter={true}/>
+          <Column title={"商品编号"} dataIndex={"goodsNumber"} sorter={true}/>
+          <Column title={"品牌"} dataIndex={"brand"} sorter={true}/>
+          <Column title={"商品名称"} dataIndex={"goodsName"} sorter={true}/>
+          {/*<Column title={"税"} dataIndex={"taxIncluded"} sorter={true}*/}
+          {/*        filters={ [{text: '是', value: 1}, {text: '否', value: 0}] }*/}
+          {/*/>*/}
+          <Column title={"发票"} dataIndex={"writeAnInvoice"} sorter={true}
+                  filters={ [{text: '是', value: 1}, {text: '否', value: 0}] }
+                  render={value => value === 1 ? '是' : '否'}
+          />
+          <Column title={"总金额"} dataIndex={"totalAmount"} sorter={true}/>
+          // 更新状态列
+          <Column title={
+                    <Popover placement="bottomRight"
+                             title={
+                               <span>
+                                 <ExclamationCircleOutlined style={{color:'rgb(250,173,20)'}} />
+                                 更新选中的订单的状态
+                               </span>
+                             }
+                             trigger="click"
+                             content={
+                               <Form size={'small'}>
+                                 <Form.Item name={'newState'} label={'更新为'}>
+                                   <Select>
+                                     <Select.Option value={'已售'}>已售</Select.Option>
+                                     <Select.Option value={'赊账中'}>赊账中</Select.Option>
+                                     <Select.Option value={'已到账'}>已到账</Select.Option>
+                                   </Select>
+                                 </Form.Item>
+                                 <Form.Item noStyle>
+                                   <div style={{textAlign: 'right'}}>
+                                     <Button type="primary" htmlType="submit">
+                                       确认
+                                     </Button>
+                                   </div>
+                                 </Form.Item>
+                               </Form>
+                             }
+                    >
+                      <Button>批量更新</Button>
+                    </Popover>
+                  }
+                  fixed={'right'}
+                  align={'center'}
+                  render={
+                    (info) =>
+                      <Popover placement="bottomRight"
+                               title={
+                                 <span>
+                                 <ExclamationCircleOutlined style={{color:'rgb(250,173,20)'}} />
+                                 更新该订单的状态
+                               </span>
+                               }
+                               trigger="click"
+                               content={
+                                 <Form size={'small'}>
+                                   <Form.Item name={'newState'} label={'更新为'}>
+                                     <Select>
+                                       <Select.Option value={'已售'}>已售</Select.Option>
+                                       <Select.Option value={'赊账中'}>赊账中</Select.Option>
+                                       <Select.Option value={'已到账'}>已到账</Select.Option>
+                                     </Select>
+                                   </Form.Item>
+                                   <Form.Item noStyle>
+                                     <div style={{textAlign: 'right'}}>
+                                       <Button type="primary" htmlType="submit">
+                                         确认
+                                       </Button>
+                                     </div>
+                                   </Form.Item>
+                                 </Form>
+                               }
+                      >
+                        <a>更新状态</a>
+                      </Popover>
+                  }
+          />
+          <Column title={""} fixed={'right'} align={'center'}
+                  render={ (info) => <Link to={'/orders/edit/'+info.orderNumber}><EditOutlined /></Link> }
+          />
+        </Table>
+      </div>
+    </div>
+  );
+}
+
+export default OrdersList;
