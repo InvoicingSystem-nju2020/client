@@ -116,17 +116,11 @@ const conditions = [
     <Input />
   </Form.Item>,
   <Form.Item
-    name='goodsNo'
-    label='货号'
-  >
-    <Input />
-  </Form.Item>,
-  <Form.Item
     label='售价'
   >
     <Input.Group compact>
-      <InputNumber name={'minPrice'} placeholder={'最低价格'} style={{width:'50%'}}/>
-      <InputNumber name={'maxPrice'} placeholder={'最高价格'} style={{width:'50%'}}/>
+      <InputNumber name={'minRetailPrice'} placeholder={'最低价格'} style={{width:'50%'}}/>
+      <InputNumber name={'maxRetailPrice'} placeholder={'最高价格'} style={{width:'50%'}}/>
     </Input.Group>
   </Form.Item>
 ];

@@ -73,6 +73,7 @@ const conditions = [
       allowEmpty={[true, true]}
       format={DateFormat.dateFormat}
       allowClear
+      picker={'month'}
       style={{width: '100%', textAlign: 'center'}}
     />
   </Form.Item>,
@@ -128,19 +129,27 @@ const conditions = [
     </Input.Group>
   </Form.Item>,
   <Form.Item
-    label='总金额'
-  >
-    <Input.Group compact>
-      <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
-      <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
-    </Input.Group>
-  </Form.Item>,
-  <Form.Item
     label='折扣'
   >
     <Input.Group compact>
       <InputNumber name={'minDiscount'} placeholder={'最低折扣'} style={{width:'50%'}}/>
       <InputNumber name={'maxDiscount'} placeholder={'最高折扣'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='单价'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minUnitPrice'} placeholder={'最低单价'} style={{width:'50%'}}/>
+      <InputNumber name={'maxUnitPrice'} placeholder={'最高单价'} style={{width:'50%'}}/>
+    </Input.Group>
+  </Form.Item>,
+  <Form.Item
+    label='总金额'
+  >
+    <Input.Group compact>
+      <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
+      <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
     </Input.Group>
   </Form.Item>
 ];
@@ -257,7 +266,9 @@ function PurchaseRecordsList() {
           <Column title={"折扣"} dataIndex={"discount"} sorter={true}/>
           <Column title={"单价"} dataIndex={"unitPrice"} sorter={true}/>
           <Column title={"金额"} dataIndex={"totalAmount"} sorter={true}/>
-          <Column title={"是否含税"} dataIndex={"taxIncluded"} sorter={true}/>
+          <Column title={"是否含税"} dataIndex={"taxIncluded"} sorter={true}
+                  filters={[{text: '是', value: 1}, {text: '否', value: 0}]}
+          />
           <Column title={"供应商"} dataIndex={"supplierName"} sorter={true}/>
           <Column title={"创建时间"} dataIndex={"createTime"} sorter={true}/>
           <Column title={""} fixed={'right'} align={'center'}

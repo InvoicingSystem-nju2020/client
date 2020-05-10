@@ -24,15 +24,12 @@ function PurchaseRecordsAdd(props: any) {
 
   // 价格和数量变动时自动计算总金额
   const onPriceAndNumChange = (changedValues:any, allValues:any) => {
-    let discount = form.getFieldValue('discount');
-    let retailPrice = form.getFieldValue('retailPrice');
+    let unitPrice = form.getFieldValue('unitPrice');
     let num = form.getFieldValue('numbers');
-    if(retailPrice && discount && num){
-      form.setFieldsValue({unitPrice:retailPrice*discount});
-      form.setFieldsValue({totalAmount:retailPrice*discount*num});
+    if(unitPrice && num){
+      form.setFieldsValue({totalAmount:unitPrice*num});
     }
     else{
-      form.setFieldsValue({unitPrice:undefined});
       form.setFieldsValue({totalAmount:undefined});
     }
   };
@@ -74,9 +71,9 @@ function PurchaseRecordsAdd(props: any) {
               }
             ]}
           >
-            <DatePicker format={DateFormat.dateFormat}/>
+            <DatePicker format={DateFormat.monthFormat} picker={'month'}/>
           </Form.Item>
-          <GoodsSearchAndShowByNumber/>
+          <GoodsSearchAndShowByNumber showPrice={true}/>
           <Form.Item
             label={"数量"}
             name={"numbers"}
@@ -91,32 +88,6 @@ function PurchaseRecordsAdd(props: any) {
                 min: 0,
                 message: '请输入正确的商品数量，>0'
               }
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"零售价"}
-            name={"retailPrice"}
-            hasFeedback
-            validateFirst={true}
-            rules={[
-              {
-                required: true,
-                message: '请输入商品的零售价'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的商品零售价，>0'
-              },
-              {
-                pattern: Regex.price,
-                message: '请输入正确格式的商品零售价，例如50、100.52'
-              },
             ]}
           >
             <InputNumber

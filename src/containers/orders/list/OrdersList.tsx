@@ -31,14 +31,14 @@ class OrderInfo {
   goodsNo: string;  // 货号
   retailPrice: number; // 零售价
   discount: number; // 折扣
-  dealPrice: number; // 成交价
+  finalPrice: number; // 成交价
   unit: string; // 单位
   numbers: number;  //数量
   totalAmount: number;  // 总金额
   typeOfPayment: string;  // 付款方式
   typeOfShipping: string; // 运输方式
 
-  constructor(orderNumber: string, state: string, createTime: string, dealTime: string, clientName: string, salesPerson: string, writeAnInvoice: number, goodsNumber: string, brand: string, goodsName: string, goodsNo: string, retailPrice: number, discount: number, dealPrice: number, unit: string, numbers: number, totalAmount: number, typeOfPayment: string, typeOfShipping: string) {
+  constructor(orderNumber: string, state: string, createTime: string, dealTime: string, clientName: string, salesPerson: string, writeAnInvoice: number, goodsNumber: string, brand: string, goodsName: string, goodsNo: string, retailPrice: number, discount: number, finalPrice: number, unit: string, numbers: number, totalAmount: number, typeOfPayment: string, typeOfShipping: string) {
     this.orderNumber = orderNumber;
     this.state = state;
     this.createTime = createTime;
@@ -52,7 +52,7 @@ class OrderInfo {
     this.goodsNo = goodsNo;
     this.retailPrice = retailPrice;
     this.discount = discount;
-    this.dealPrice = dealPrice;
+    this.finalPrice = finalPrice;
     this.unit = unit;
     this.numbers = numbers;
     this.totalAmount = totalAmount;
@@ -63,17 +63,6 @@ class OrderInfo {
 
 // 搜索条件
 const conditions = [
-  <Form.Item
-    name='purchaseTime'
-    label='进货时间'
-  >
-    <RangePicker
-      allowEmpty={[true, true]}
-      format={DateFormat.dateFormat}
-      allowClear
-      style={{width: '100%', textAlign: 'center'}}
-    />
-  </Form.Item>,
   <Form.Item
     name='createTime'
     label='创建时间'
@@ -86,14 +75,32 @@ const conditions = [
     />
   </Form.Item>,
   <Form.Item
+    name='orderNumber'
+    label='订单编号'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
     name='goodsNumber'
     label='商品编号'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='abbreviation'
+    name='goodsName'
     label='品名'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='client'
+    label='客户'
+  >
+    <Input />
+  </Form.Item>,
+  <Form.Item
+    name='client'
+    label='销售员'
   >
     <Input />
   </Form.Item>,
@@ -104,41 +111,11 @@ const conditions = [
     <Input />
   </Form.Item>,
   <Form.Item
-    name='supplier'
-    label='供应商'
-  >
-    <Input />
-  </Form.Item>,
-  <Form.Item
-    label='数量'
-  >
-    <Input.Group compact>
-      <InputNumber name={'minNumbers'} placeholder={'最小数量'} style={{width:'50%'}}/>
-      <InputNumber name={'maxNumbers'} placeholder={'最大数量'} style={{width:'50%'}}/>
-    </Input.Group>
-  </Form.Item>,
-  <Form.Item
-    label='零售价'
-  >
-    <Input.Group compact>
-      <InputNumber name={'minRetailPrice'} placeholder={'最低零售价'} style={{width:'50%'}}/>
-      <InputNumber name={'maxRetailPrice'} placeholder={'最高零售价'} style={{width:'50%'}}/>
-    </Input.Group>
-  </Form.Item>,
-  <Form.Item
     label='总金额'
   >
     <Input.Group compact>
       <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
       <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
-    </Input.Group>
-  </Form.Item>,
-  <Form.Item
-    label='折扣'
-  >
-    <Input.Group compact>
-      <InputNumber name={'minDiscount'} placeholder={'最低折扣'} style={{width:'50%'}}/>
-      <InputNumber name={'maxDiscount'} placeholder={'最高折扣'} style={{width:'50%'}}/>
     </Input.Group>
   </Form.Item>
 ];
@@ -147,7 +124,7 @@ const conditions = [
 function OrdersList() {
   let [data, setData] = useState<OrderInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
-  let types: string[] = ['团购', '批发'];   // 所有商品种类
+  let orderStates: string[] = ['已售', '赊账中', '已到账']; // 订单的状态
 
   let pageSize: number = 20;
 
@@ -219,7 +196,7 @@ function OrdersList() {
                      <Col xs={24} sm={8}>
                        <Row gutter={18}>
                          <Col><b>成交价:</b> </Col>
-                         <Col>{info.dealPrice}</Col>
+                         <Col>{info.finalPrice}</Col>
                        </Row>
                      </Col>
                      <Col xs={24} sm={8}>
@@ -250,7 +227,9 @@ function OrdersList() {
                }}
         >
           <Column title={"订单编号"} dataIndex={"orderNumber"} sorter={true}/>
-          <Column title={"状态"} dataIndex={"state"} sorter={true}/>
+          <Column title={"状态"} dataIndex={"state"} sorter={true}
+                  filters={ orderStates.map(value => {return({text: value, value: value})} ) }
+          />
           <Column title={"创建时间"} dataIndex={"createTime"} sorter={true}/>
           <Column title={"成交时间"} dataIndex={"dealTime"} sorter={true}/>
           <Column title={"客户"} dataIndex={"clientName"} sorter={true}/>
