@@ -1,16 +1,20 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select } from "antd";
+import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, Space, Popconfirm} from "antd";
 import { Form } from "antd";
+import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { FormItemLayout, FormInputSize, Regex } from "../../../util/ComponentsUtil";
-
+import {ClientInfo} from "../../../api/data";
 
 const { Option } = Select;
 
-function ClientsAdd(props: any) {
+function ClientsAddAndEdit(props: any) {
   const [form] = Form.useForm();
-  // const { getFieldDecorator } = props.form;
+  const [clientInfoToEdit, setClientInfoToEdit] = useState<ClientInfo>();
+  // 修改模式
+  const clinetsNumber: string = props.match.params.clientsNumber;
+  const isEdit: boolean = !!clinetsNumber;
 
   const onFinish = (v:any) => {
     form.validateFields()
@@ -18,6 +22,39 @@ function ClientsAdd(props: any) {
         console.log('Received values of form: ', values);
       });
   };
+
+  // 组件首次加载时，若为修改模式则获取原本的信息
+  useEffect(() => {
+    if(!isEdit || !clinetsNumber){
+      return;
+    }
+    // 获取原本的信息
+    let info = getClientInfo(clinetsNumber);
+    setClientInfoToEdit(info);
+    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+  }, [])
+
+  // 获取要被修改的信息
+  function getClientInfo(clinetsNumber: string) {
+    let result: ClientInfo;
+    result = {clientsNumber: 'TFS2010-001', clientsName: '江苏省网球协会', clientsType: '团购', clientsContact: '胡', clientsSex: '男', clientsPost: '网协主席', contactInformation:'18000000000', remarks: '一般合作商', mail: 'xxx@a.com', other: '已退休'};
+    return result;
+  }
+
+  // 重置表单
+  function resetForm() {
+    if(isEdit && clientInfoToEdit){
+      form.setFieldsValue(clientInfoToEdit);
+    }
+    else {
+      form.resetFields();
+    }
+  }
+
+  // 删除
+  function confirmDelete() {
+
+  }
 
   return (
     <div>
@@ -29,16 +66,31 @@ function ClientsAdd(props: any) {
         size={FormInputSize}
       >
         <PageHeader
-          title={"录入客户"}
+          title={isEdit ? <Space size={"large"}>修改客户<small>编号: {clinetsNumber}</small></Space> : "录入客户"}
           ghost={false}
           onBack={() => window.history.back()}
           extra={[
+            (isEdit?
+                <Popconfirm
+                  placement="bottomRight"
+                  title={"确认删除？"}
+                  onConfirm={confirmDelete}
+                  key="deleteBtn"
+                >
+                  <Button size={"large"} type={"danger"}>
+                    <DeleteOutlined />删除
+                  </Button>
+                </Popconfirm> : ''
+            ),
+            <Button key="resetBtn" size={"large"} onClick={resetForm}>
+              <ReloadOutlined />重置
+            </Button>,
             <Button key="cancelBtn" size={"large"} onClick={() => window.history.back()}>
-              取消
-          </Button>,
+              <CloseOutlined />取消
+            </Button>,
             <Button key="okBtn" size={"large"} type="primary" htmlType="submit">
-              确认
-          </Button>,
+              <CheckOutlined />确认
+            </Button>
           ]}
         >
         </PageHeader>
@@ -173,7 +225,7 @@ function ClientsAdd(props: any) {
           </Form.Item>
           <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
             <Button type="primary" htmlType="submit" size="large">
-              确认
+              <CheckOutlined/>确认
             </Button>
           </Form.Item>
         </div>
@@ -182,4 +234,4 @@ function ClientsAdd(props: any) {
   );
 }
 
-export default ClientsAdd;
+export default ClientsAddAndEdit;

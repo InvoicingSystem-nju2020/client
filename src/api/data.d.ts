@@ -20,6 +20,7 @@ interface GoodsAddFormData {
   remarks: string;
 }
 
+// 供应商信息
 interface SupplierInfo {
   supplierNumber: string;
   supplierName: string;
@@ -34,4 +35,18 @@ interface SupplierInfo {
   mail: string;
 }
 
-export {GoodsAddFormData, SupplierInfo};
+// 客户信息
+interface ClientInfo {
+  clientsNumber: string;
+  clientsName: string;
+  clientsType: string;
+  clientsContact: string;
+  clientsSex: string;
+  clientsPost: string;
+  contactInformation: string;
+  mail: string;
+  remarks: string;
+  other: string;
+}
+
+export {GoodsAddFormData, SupplierInfo, ClientInfo};

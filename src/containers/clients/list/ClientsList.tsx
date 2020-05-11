@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
 import { Table } from 'antd';
-import { EditOutlined, AccountBookOutlined } from '@ant-design/icons';
+import { EditOutlined, AccountBookOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
@@ -111,7 +111,7 @@ function ClientsList() {
         title="客户列表"
         extra={[
           <Button key="addBtn" size={"large"} type="primary" href={"add"}>
-            录入客户
+            <PlusOutlined /> 录入客户
           </Button>,
         ]}
       >

@@ -20,7 +20,7 @@ import SideMenu from '../../components/side-menu/SideMenu';
 import GoodsList from "../goods/list/GoodsList";
 import GoodsAdd from "../goods/add/GoodsAdd";
 import ClientsList from "../clients/list/ClientsList";
-import ClientsAdd from "../clients/add/ClientsAdd";
+import ClientsAddAndEdit from "../clients/add-and-edit/ClientsAddAndEdit";
 import SuppliersList from "../suppliers/list/SuppliersList";
 import SuppliersAddAndEdit from "../suppliers/add-and-edit/SuppliersAddAndEdit";
 import PurchaseRecordsList from "../purchase-records/list/PurchaseRecordsList";
@@ -74,7 +74,8 @@ const App: React.FC = () => {
                 <Route path="/clients">
                   <RouterSwitch>
                     <Route path="/clients/list" component={ClientsList}/>
-                    <Route path="/clients/add" component={ClientsAdd}/>
+                    <Route path="/clients/add" component={ClientsAddAndEdit}/>
+                    <Route path="/clients/edit/:clientsNumber" component={ClientsAddAndEdit}/>
                     <Redirect to="/clients/list"/>
                   </RouterSwitch>
                 </Route>
