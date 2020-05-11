@@ -99,7 +99,7 @@ const conditions = [
     <Input />
   </Form.Item>,
   <Form.Item
-    name='client'
+    name='salesPerson'
     label='销售员'
   >
     <Input />
@@ -166,7 +166,7 @@ function OrdersList() {
         <div>
           <AdvancedSearchForm conditions={conditions}/>
         </div>
-        <Table dataSource={data} rowKey={'id'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'orderNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
                rowSelection={{
                  fixed: true,
@@ -308,7 +308,7 @@ function OrdersList() {
                                  </Form>
                                }
                       >
-                        <a>更新状态</a>
+                        <Button type="link">更新状态</Button>
                       </Popover>
                   }
           />

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
 import { Table } from 'antd';
-import { EditOutlined, AccountBookOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
@@ -118,7 +118,7 @@ function SuppliersList() {
         title="供应商列表"
         extra={[
           <Button key="addBtn" size={"large"} type="primary" href={"add"}>
-            录入供应商
+            <PlusOutlined /> 录入供应商
           </Button>,
         ]}
       >

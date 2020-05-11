@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import {Button, Col, Form, Input, InputNumber, Row} from "antd";
-import { DownOutlined, UpOutlined, SearchOutlined } from '@ant-design/icons';
+import { DownOutlined, UpOutlined, SearchOutlined, ReloadOutlined } from '@ant-design/icons';
 
 // CSS
 import './AdvancedSearchForm.css'
@@ -67,9 +67,10 @@ const AdvancedSearchForm = (props:any) => {
               form.resetFields();
             }}
           >
-            重置
+            <ReloadOutlined />重置
           </Button>
-          <a
+          <Button
+            type={"link"}
             style={{ fontSize: 12 }}
             onClick={() => {
               setExpand(!expand);
@@ -78,7 +79,7 @@ const AdvancedSearchForm = (props:any) => {
             { needExpand ?
               <span>{expand ? <UpOutlined /> : <DownOutlined />} {expand ? '收起' : '展开'}</span>
               : <span></span>}
-          </a>
+          </Button>
         </Col>
       </Row>
     </Form>

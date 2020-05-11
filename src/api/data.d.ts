@@ -20,4 +20,18 @@ interface GoodsAddFormData {
   remarks: string;
 }
 
-export {GoodsAddFormData};
+interface SupplierInfo {
+  supplierNumber: string;
+  supplierName: string;
+  contactInformation: string;
+  remarks: string;
+  productionCategory: string;
+  purchasingCategories: string;
+  legalPerson: string;
+  contact: string;
+  sex: string;
+  post: string;
+  mail: string;
+}
+
+export {GoodsAddFormData, SupplierInfo};

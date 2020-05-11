@@ -22,7 +22,7 @@ import GoodsAdd from "../goods/add/GoodsAdd";
 import ClientsList from "../clients/list/ClientsList";
 import ClientsAdd from "../clients/add/ClientsAdd";
 import SuppliersList from "../suppliers/list/SuppliersList";
-import SuppliersAdd from "../suppliers/add/SuppliersAdd";
+import SuppliersAddAndEdit from "../suppliers/add-and-edit/SuppliersAddAndEdit";
 import PurchaseRecordsList from "../purchase-records/list/PurchaseRecordsList";
 import PurchaseRecordsAdd from "../purchase-records/add/PurchaseRecordsAdd";
 import OrdersAdd from "../orders/add/OrdersAdd";
@@ -81,7 +81,8 @@ const App: React.FC = () => {
                 <Route path="/suppliers">
                   <RouterSwitch>
                     <Route path="/suppliers/list" component={SuppliersList}/>
-                    <Route path="/suppliers/add" component={SuppliersAdd}/>
+                    <Route path="/suppliers/add" component={SuppliersAddAndEdit}/>
+                    <Route path="/suppliers/edit/:supplierNumber" component={SuppliersAddAndEdit}/>
                     <Redirect to="/suppliers/list"/>
                   </RouterSwitch>
                 </Route>
