@@ -65,7 +65,6 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
         {...FormItemLayout}
         onFinish={onFinish}
         size={FormInputSize}
-        initialValues={supplierInfoToEdit}
       >
         <PageHeader
           title={isEdit ? <Space size={"large"}>修改供应商<small>编号: {supplierNumber}</small></Space> : "录入供应商"}
