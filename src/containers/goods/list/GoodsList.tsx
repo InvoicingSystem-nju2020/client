@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 import {Form, Row, Col, PageHeader, Input, Button, InputNumber} from 'antd';
 import { Table } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
@@ -161,7 +161,7 @@ function GoodsList() {
         title="商品列表"
         extra={[
           <Button key="addBtn" size={"large"} type="primary" href={"add"}>
-            录入商品
+            <PlusOutlined /> 录入商品
           </Button>,
         ]}
       >

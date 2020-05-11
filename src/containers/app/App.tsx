@@ -18,7 +18,7 @@ import SideMenu from '../../components/side-menu/SideMenu';
 // 容器
 // import GoodsContainer from "../goods/GoodsContainer";
 import GoodsList from "../goods/list/GoodsList";
-import GoodsAdd from "../goods/add/GoodsAdd";
+import GoodsAddAndEdit from "../goods/add-and-edit/GoodsAddAndEdit";
 import ClientsList from "../clients/list/ClientsList";
 import ClientsAddAndEdit from "../clients/add-and-edit/ClientsAddAndEdit";
 import SuppliersList from "../suppliers/list/SuppliersList";
@@ -67,7 +67,8 @@ const App: React.FC = () => {
                 <Route path="/goods">
                   <RouterSwitch>
                     <Route path="/goods/list" component={GoodsList}/>
-                    <Route path="/goods/add" component={GoodsAdd}/>
+                    <Route path="/goods/add" component={GoodsAddAndEdit}/>
+                    <Route path="/goods/edit/:goodsNumber" component={GoodsAddAndEdit}/>
                     <Redirect to="/goods/list"/>
                   </RouterSwitch>
                 </Route>

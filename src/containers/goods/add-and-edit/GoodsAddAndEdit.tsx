@@ -1,38 +1,63 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select } from "antd";
+import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, Space, Popconfirm} from "antd";
 import { Form } from "antd";
+import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { FormItemLayout, FormInputSize, Regex } from "../../../util/ComponentsUtil";
-import {GoodsAddFormData} from "../../../api/data";
+import {GoodsInfo} from "../../../api/data";
 
-//自定义组件
-// import GoodsAddForm from "./GoodsAddForm/GoodsAddForm";
 
 const { Option } = Select;
 
-function GoodsAdd(props: any) {
+function GoodsAddAndEdit(props: any) {
   const [form] = Form.useForm();
-  // const { getFieldDecorator } = props.form;
-
-  // 自动补全的dataSource
-  // let types: string[] = ['网球拍', '羽球拍'];
-  // let units: string[] = ['支', '个'];
   const [types, setTypes] = useState<{ value: string }[]>([{value:'网球拍'}, {value:'羽球拍'}]);
   const [units, setUnits] = useState([{value:'支'}, {value:'个'}]);
+  // 修改模式
+  const [goodsInfoToEdit, setGoodsInfoToEdit] = useState<GoodsInfo>();
+  const goodsNumber: string = props.match.params.goodsNumber;
+  const isEdit: boolean = !!goodsNumber;
 
   const onFinish = (v:any) => {
-    // props.form.validateFields((err:any, values:any) => {
-    //   if (!err) {   // 所有校验通过
-    //     console.log('Received values of form: ', values);
-    //     let data:GoodsAddFormData = values;
-    //   }
-    // })
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
       });
   };
+
+  // 组件首次加载时，若为修改模式则获取原本的信息
+  useEffect(() => {
+    if(!isEdit || !goodsNumber){
+      return;
+    }
+    // 获取原本的信息
+    let info = getSupplierInfo(goodsNumber);
+    setGoodsInfoToEdit(info);
+    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+  }, [])
+
+  // 获取要被修改的信息
+  function getSupplierInfo(supplierNumber: string) {
+    let result: GoodsInfo;
+    result = {goodsNumber: 'xxxxxxx01', goodsName: '室内器材', abbreviation:'网球拍', brand: 'wilson', model: 'pro staff', goodsNo: 'WRT74181U2', material: '碳纤维', colour: '黑', type: '球拍', specifications: '97(in)2/16*19', unit: '支', weight: '315G', weightNum: 315, weightUnit: 'g', retailPrice:2480, placeOfProduction: '中国', qualityGuaranteePeriod: 6, remarks: 'xxx'};
+    return result;
+  }
+
+  // 重置表单
+  function resetForm() {
+    if(isEdit && goodsInfoToEdit){
+      form.setFieldsValue(goodsInfoToEdit);
+    }
+    else {
+      form.resetFields();
+    }
+  }
+
+  // 删除
+  function confirmDelete() {
+
+  }
 
   return (
     <div>
@@ -44,16 +69,31 @@ function GoodsAdd(props: any) {
         size={FormInputSize}
       >
         <PageHeader
-          title={"录入商品"}
+          title={isEdit ? <Space size={"large"}>修改商品<small>编号: {goodsNumber}</small></Space> : "录入商品"}
           ghost={false}
           onBack={() => window.history.back()}
           extra={[
+            (isEdit?
+                <Popconfirm
+                  placement="bottomRight"
+                  title={"确认删除？"}
+                  onConfirm={confirmDelete}
+                  key="deleteBtn"
+                >
+                  <Button size={"large"} type="primary" danger>
+                    <DeleteOutlined />删除
+                  </Button>
+                </Popconfirm> : ''
+            ),
+            <Button key="resetBtn" size={"large"} onClick={resetForm}>
+              <ReloadOutlined />重置
+            </Button>,
             <Button key="cancelBtn" size={"large"} onClick={() => window.history.back()}>
-              取消
-          </Button>,
+              <CloseOutlined />取消
+            </Button>,
             <Button key="okBtn" size={"large"} type="primary" htmlType="submit">
-              确认
-          </Button>,
+              <CheckOutlined />确认
+            </Button>
           ]}
         >
         </PageHeader>
@@ -211,6 +251,7 @@ function GoodsAdd(props: any) {
           {/*</Form.Item>*/}
           <Form.Item
             label={"重量"}
+            // initialValue={{weightNum: undefined, weightUnit: 'g'}}
           >
             <Input.Group compact>
               <Form.Item
@@ -321,7 +362,7 @@ function GoodsAdd(props: any) {
           </Form.Item>
           <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
             <Button type="primary" htmlType="submit" size="large">
-              确认
+              <CheckOutlined/>确认
             </Button>
           </Form.Item>
         </div>
@@ -330,5 +371,5 @@ function GoodsAdd(props: any) {
   );
 }
 
-// export default GoodsAdd;
-export default GoodsAdd;
+// export default GoodsAddAndEdit;
+export default GoodsAddAndEdit;

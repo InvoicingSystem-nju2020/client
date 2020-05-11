@@ -78,7 +78,7 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
                 onConfirm={confirmDelete}
                 key="deleteBtn"
               >
-                <Button size={"large"} type={"danger"}>
+                <Button size={"large"} type="primary" danger>
                   <DeleteOutlined />删除
                 </Button>
               </Popconfirm> : ''

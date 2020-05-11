@@ -49,4 +49,26 @@ interface ClientInfo {
   other: string;
 }
 
-export {GoodsAddFormData, SupplierInfo, ClientInfo};
+// 商品信息
+interface GoodsInfo {
+  goodsNumber: string;
+  goodsName: string;
+  abbreviation: string;
+  brand: string;
+  model: string;
+  goodsNo: string;
+  material: string;
+  colour: string;
+  type: string;
+  specifications: string;
+  unit: string;
+  weight: string;
+  weightNum: number;
+  weightUnit: string;
+  retailPrice: number;
+  placeOfProduction: string;
+  qualityGuaranteePeriod: number;
+  remarks: string;
+}
+
+export {GoodsAddFormData, SupplierInfo, ClientInfo, GoodsInfo};
