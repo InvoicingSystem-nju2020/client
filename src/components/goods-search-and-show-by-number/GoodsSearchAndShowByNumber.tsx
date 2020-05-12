@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {Input, AutoComplete, Col, Row, Form, Card} from 'antd';
 import { SelectProps } from 'antd/es/select';
@@ -37,11 +37,23 @@ const GoodsSearchAndShowByNumber = (props:any) => {
   const [selectedGoodsNumber, setSelectedGoodsNumber] = useState<string>(''); // 已选择的商品编号
   const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');  // 表单验证状态
   const showPrice: boolean = props.showPrice ? true : false; // 是否显示价格
+  const goodsNumberToShow: string = props.goodsNumberToShow;  // 是否指定预先显示的商品编号
+  const isResetting = props.isResetting;  // 重置状态，状态提升
+  const setIsResetting = props.setIsResetting;
 
+  // 组件加载时判断是否需要预先显示商品
+  useEffect(() => {
+    if(goodsNumberToShow){  // 需要预先显示商品
+      reset();
+    }
+    if(isResetting){  // 处理重置时，目前重置时该effect生效2次，虽有重复但影响不大
+      setIsResetting(false);
+    }
+  },[goodsNumberToShow, isResetting]);
 
-  // 展示搜索结果
-  const searchResult = (query: string) => {
-    const result = [
+  // 搜索商品
+  const searchGoods = (query: string) => {
+    let result = [
       new GoodsInfo('WQP00001', '室内器材',
         '网球拍', 'wilson', 'pro staff', 'WRT74181U2', '碳纤维', '支', 2480),
       new GoodsInfo('YQP00001', '室内器材',
@@ -49,7 +61,13 @@ const GoodsSearchAndShowByNumber = (props:any) => {
       new GoodsInfo('YMQ00001', '室内耗材',
         '羽毛球', 'LINING', 'A+90', 'AYQD016-1', '鹅毛', '个', 112)
     ];
-    setGoodsInfosResult(result);
+    setGoodsInfosResult(result);  // setState商品搜索结果
+    return result;
+  };
+
+  // 展示搜索结果
+  const searchResult = (query: string) => {
+    const result = searchGoods(query);
     return result.map((item, index) => {
       return {
         value: item.goodsNumber,
@@ -97,11 +115,23 @@ const GoodsSearchAndShowByNumber = (props:any) => {
     selectAndShow(value);
   };
 
+  // 重置
+  const reset = () => {
+    if(goodsNumberToShow){  // 需要预先显示商品
+      searchGoods(goodsNumberToShow);
+      selectAndShow(goodsNumberToShow);
+    }
+    else{
+      setSelectedGoodsNumber('');
+      setValidateStatus('error');
+    }
+  }
+
   // 选择一个商品后显示信息
   const selectAndShow = (selectedGoodsNumber: string) => {
     setValidateStatus('success');   // 设置表单校验状态
     setSelectedGoodsNumber(selectedGoodsNumber);    // 选中了这个GoodsInfo
-  }
+  };
 
   const getAndShowGoodsInfo = () => {
     if(validateStatus === 'success'){   // 已经选择

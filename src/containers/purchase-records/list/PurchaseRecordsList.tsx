@@ -6,7 +6,7 @@ import { Table } from 'antd';
 import { DatePicker } from 'antd';
 import 'moment/locale/zh-cn';
 
-import { EditOutlined, AccountBookOutlined } from '@ant-design/icons';
+import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import { DateFormat } from "../../../util/ComponentsUtil";
@@ -192,7 +192,7 @@ function PurchaseRecordsList() {
         title="进货记录列表"
         extra={[
           <Button key="addBtn" size={"large"} type="primary" href={"add"}>
-            录入进货记录
+            <PlusOutlined/>录入进货记录
           </Button>,
         ]}
       >

@@ -71,4 +71,18 @@ interface GoodsInfo {
   remarks: string;
 }
 
-export {GoodsAddFormData, SupplierInfo, ClientInfo, GoodsInfo};
+interface PurchaseRecordInfo {
+  id: string;
+  purchaseTime: moment;
+  goodsNumber: string;
+  numbers: number;
+  discount: number;
+  unitPrice: number;
+  totalAmount: number;
+  taxIncluded: string;
+  precautionsForPreservation: string;
+  supplierNumber: string;
+  remarks: string;
+}
+
+export {GoodsAddFormData, SupplierInfo, ClientInfo, GoodsInfo, PurchaseRecordInfo};
