@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 
 import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, DatePicker} from "antd";
 import { Form } from "antd";
@@ -7,14 +7,17 @@ import moment from 'moment';
 import {FormItemLayout, FormInputSize, Regex, DateFormat} from "../../../util/ComponentsUtil";
 import GoodsSearchAndShowByNumber from "../../../components/goods-search-and-show-by-number/GoodsSearchAndShowByNumber";
 import ClientSearch from "../../../components/client-search/ClientsSearch";
+import {SelectProps} from "antd/es/select";
 
 
 const { Option } = Select;
 
-function OrdersAdd(props: any) {
+function OrdersAddAndEdit(props: any) {
   const [form] = Form.useForm();
-  // const { getFieldDecorator } = props.form;
+  const [typeOfPayment, setTypeOfPayment] = useState<string>(); // 付款方式
+  const [stateOptions, setStateOptions] = useState<SelectProps<object>['options']>(); // 订单状态选项
 
+  // 表单提交
   const onFinish = (v:any) => {
     form.validateFields()
       .then(values => {
@@ -22,6 +25,7 @@ function OrdersAdd(props: any) {
       });
   };
 
+  // 价格和数量变化
   const onPriceAndNumChange = (changedValues:any, allValues:any) => {
     let price = form.getFieldValue('finalPrice');
     let num = form.getFieldValue('numbers');
@@ -31,6 +35,38 @@ function OrdersAdd(props: any) {
     else{
       form.setFieldsValue({totalAmount:undefined});
     }
+  };
+
+  // 开始时设置订单的默认状态
+  useEffect(() => {
+    getAndSetOrderStateOptions();
+  }, []);
+
+  // 付款方式变化时
+  const onTypeOfPaymentChange = () => {
+    getAndSetOrderStateOptions();
+  };
+
+  // 获取订单状态选项
+  const getAndSetOrderStateOptions = () => {
+    const typeOfPayment = form.getFieldValue('typeOfPayment');
+    const selectedState = form.getFieldValue('state');
+    let options:string[] = [];
+    if(typeOfPayment === '现金'){
+      options = ['待付款', '已售', '已完成'];
+    }
+    else if(typeOfPayment === '预支付'){
+      options = ['已售', '已完成'];
+    }
+    else if(typeOfPayment === '赊账'){
+      options = ['赊账中', '已到账', '已完成'];
+    }
+    console.log(options)
+    // 若选项改变了则选取一个默认值
+    if(options.length > 0 && !options.includes(selectedState)){
+      form.setFieldsValue({state: options[0]});
+    }
+    setStateOptions(options.map(value => {return {value: value, label: value} }));
   };
 
   return (
@@ -43,6 +79,11 @@ function OrdersAdd(props: any) {
         onValuesChange={onPriceAndNumChange}
         scrollToFirstError
         size={FormInputSize}
+        initialValues={{
+          writeAnInvoice: 0,
+          typeOfPayment: '现金',
+          typeOfShipping: '自提'
+        }}
       >
         <PageHeader
           title={"录入订单"}
@@ -84,7 +125,7 @@ function OrdersAdd(props: any) {
               }
             ]}
           >
-            <Select defaultValue={0}>
+            <Select>
               <Option value={0}>否</Option>
               <Option value={1}>是</Option>
             </Select>
@@ -174,9 +215,10 @@ function OrdersAdd(props: any) {
               }
             ]}
           >
-            <Select defaultValue={'现金'}>
+            <Select value={typeOfPayment} onChange={onTypeOfPaymentChange}>
               <Option value={'现金'}>现金</Option>
-              <Option value={'预付'}>预付</Option>
+              <Option value={'预支付'}>预支付</Option>
+              <Option value={'赊账'}>赊账</Option>
             </Select>
           </Form.Item>
           <Form.Item
@@ -190,8 +232,24 @@ function OrdersAdd(props: any) {
               }
             ]}
           >
-            <Select defaultValue={'自提'}>
+            <Select>
               <Option value={'自提'}>自提</Option>
+              <Option value={'邮寄'}>邮寄</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label={"订单状态"}
+            name={"state"}
+            hasFeedback
+            rules={[
+              {
+                required: true,
+                message: '请选择订单状态'
+              }
+            ]}
+          >
+            <Select options={stateOptions}>
+
             </Select>
           </Form.Item>
           <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
@@ -205,4 +263,4 @@ function OrdersAdd(props: any) {
   );
 }
 
-export default OrdersAdd;
+export default OrdersAddAndEdit;

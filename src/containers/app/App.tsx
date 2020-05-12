@@ -25,7 +25,7 @@ import SuppliersList from "../suppliers/list/SuppliersList";
 import SuppliersAddAndEdit from "../suppliers/add-and-edit/SuppliersAddAndEdit";
 import PurchaseRecordsList from "../purchase-records/list/PurchaseRecordsList";
 import PurchaseRecordsAddAndEdit from "../purchase-records/add-and-edit/PurchaseRecordsAddAndEdit";
-import OrdersAdd from "../orders/add/OrdersAdd";
+import OrdersAddAndEdit from "../orders/add-and-edit/OrdersAddAndEdit";
 import OrdersList from "../orders/list/OrdersList";
 
 
@@ -53,7 +53,7 @@ const App: React.FC = () => {
                 <Route path="/orders">
                   <RouterSwitch>
                     <Route path="/orders/list" component={OrdersList}/>
-                    <Route path="/orders/add" component={OrdersAdd}/>
+                    <Route path="/orders/add" component={OrdersAddAndEdit}/>
                     <Redirect to="/orders/list"/>
                   </RouterSwitch>
                 </Route>
