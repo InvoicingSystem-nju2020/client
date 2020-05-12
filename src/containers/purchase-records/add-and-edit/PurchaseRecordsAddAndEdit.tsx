@@ -259,7 +259,11 @@ function PurchaseRecordsAddAndEdit(props: any) {
               placeholder={"可不填"}
             />
           </Form.Item>
-          <SupplierSearchAndShow/>
+          <SupplierSearchAndShow
+            supplierNumberToShow={purchaseRecordInfoToEdit?.supplierNumber}
+            isResetting={isResetting}
+            setIsResetting={setIsResetting}
+          />
           <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
             <Button type="primary" htmlType="submit" size="large">
               <CheckOutlined />确认

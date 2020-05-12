@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {SelectProps} from "antd/es/select";
 import {FormItemProps} from "antd/es/form";
 import {AutoComplete, Card, Col, Form, Input, Row} from "antd";
@@ -21,21 +21,52 @@ class SupplierInfo{
   }
 }
 
-const SupplierSearchAndShow: React.FC = () => {
+const SupplierSearchAndShow = (props:any) => {
   const [options, setOptions] = useState<SelectProps<object>['options']>([]);
   const [supplierInfosResult, setSupplierInfosResult] = useState<SupplierInfo[]>([]);
   const [selectedSupplierNumber, setSelectedSupplierNumber] = useState<string>('');
   const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');
+  const supplierNumberToShow: string = props.supplierNumberToShow;  // 是否指定预先显示的商品编号
+  const isResetting = props.isResetting;  // 重置状态，状态提升
+  const setIsResetting = props.setIsResetting;
 
-  // 展示搜索结果
-  const searchResult = (query: string) => {
-    const result = [
+  // 组件加载时判断是否需要预先显示供应商
+  useEffect(() => {
+    if(supplierNumberToShow){  // 需要预先显示商品
+      reset();
+    }
+    if(isResetting){  // 处理重置时，目前重置时该effect生效2次，虽有重复但影响不大
+      setIsResetting(false);
+    }
+  },[supplierNumberToShow, isResetting]);
+
+  // 重置
+  const reset = () => {
+    if(supplierNumberToShow){  // 需要预先显示商品
+      searchSupplier(supplierNumberToShow);
+      selectAndShow(supplierNumberToShow);
+    }
+    else{
+      setSelectedSupplierNumber('');
+      setValidateStatus('error');
+    }
+  }
+
+  // 搜索供应商
+  const searchSupplier = (query: string) => {
+    let result = [
       new SupplierInfo('LINING01', '李宁（北京）体育用品有限公司',
         '运动鞋服、体育器材', '一般合作商', '羽球系列'),
       new SupplierInfo('WILSON01', 'WILSON',
         '体育器材', '', '羽球系列')
     ];
     setSupplierInfosResult(result);
+    return result;
+  };
+
+  // 展示搜索结果
+  const searchResult = (query: string) => {
+    const result = searchSupplier(query);
     return result.map((item, index) => {
       return {
         value: item.number,
