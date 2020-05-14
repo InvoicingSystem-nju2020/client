@@ -72,14 +72,14 @@ interface GoodsInfo {
 }
 
 interface PurchaseRecordInfo {
-  id: string;
+  id?: string;
   purchaseTime: moment;
   goodsNumber: string;
   numbers: number;
   discount: number;
   unitPrice: number;
   totalAmount: number;
-  taxIncluded: string;
+  taxIncluded: number;
   precautionsForPreservation: string;
   supplierNumber: string;
   remarks: string;

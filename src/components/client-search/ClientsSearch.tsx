@@ -39,7 +39,7 @@ const ClientSearch = (props:ClientSearchProps) => {
 
   // 组件加载时判断是否需要预先显示商品
   useEffect(() => {
-    console.log(clientNumber);
+    // console.log(clientNumber);
     if(clientNumber){  // 需要预先显示商品
       reset();
     }

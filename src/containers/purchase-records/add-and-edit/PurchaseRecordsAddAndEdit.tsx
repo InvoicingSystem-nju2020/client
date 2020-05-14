@@ -1,6 +1,18 @@
 import React, {useEffect, useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, DatePicker, Space, Popconfirm} from "antd";
+import {
+  Button,
+  InputNumber,
+  Input,
+  AutoComplete,
+  PageHeader,
+  Select,
+  DatePicker,
+  Space,
+  Popconfirm,
+  message, notification
+} from "antd";
+
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
@@ -10,6 +22,9 @@ import {FormItemLayout, FormInputSize, Regex, DateFormat} from "../../../util/Co
 import GoodsSearchAndShowByNumber from "../../../components/goods-search-and-show-by-number/GoodsSearchAndShowByNumber";
 import SupplierSearchAndShow from "../../../components/suppliers-search-and-show/SuppliersSearchAndShow";
 import {PurchaseRecordInfo} from "../../../api/data";
+// api
+import {addPurchaseRecords, getPurchaseRecords, getPurchaseRecordById, editPurchaseRecord, deletePurchaseRecord} from "../../../api/PurchaseRecordApi";
+import {BaseParam} from "../../../util/config";
 
 
 const { Option } = Select;
@@ -27,6 +42,34 @@ function PurchaseRecordsAddAndEdit(props: any) {
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
+        // let purchaseRecord = {
+        //   purchaseTime: values.purchaseTime,
+        //   goodsNumber: values.goodsNumber,
+        //   numbers: values.numbers,
+        //   discount: values.discount,
+        //   unitPrice: values.unitPrice,
+        //   totalAmount: values.totalAmount,
+        //   taxIncluded: values
+        // }
+        let purchaseRecord = (values as any);
+        if(isEdit){
+          purchaseRecord.id = id;
+        }
+        let api = isEdit ? editPurchaseRecord(id, purchaseRecord) : addPurchaseRecords(purchaseRecord);
+
+        const hide = message.loading('正在处理...', 0);  // 显示正在新增
+        api.then((response) => {
+          console.log(response);
+          const data = response.data;
+          hide(); // 隐藏正在新增
+          notification['success']({message: '录入进货记录成功', description: '编号: '+data});  // 显示成功
+          // 新增成功后跳转到列表
+          setTimeout(props.history.push(BaseParam.BASE_URL+'purchase-records/list'), 1000);
+        }).catch(reason => {
+          console.error(reason);
+          hide();
+          notification['error']({message: '发生了错误', description: reason.toString()});
+        });
       });
   };
 
@@ -44,7 +87,7 @@ function PurchaseRecordsAddAndEdit(props: any) {
   // 获取要被修改的信息
   function getSupplierInfo(supplierNumber: string) {
     let result: PurchaseRecordInfo;
-    result = {id: 'PR00000001', purchaseTime: moment('2019/04', DateFormat.monthFormat), goodsNumber: 'WQP00001', numbers: 24, discount: 0.5, unitPrice: 1240, totalAmount: 29760, taxIncluded: '是', precautionsForPreservation: '防晒防潮', supplierNumber: 'AMER001', remarks: 'xx'};
+    result = {id: 'PR00000001', purchaseTime: moment('2019/04', DateFormat.monthFormat), goodsNumber: 'WQP00001', numbers: 24, discount: 0.5, unitPrice: 1240, totalAmount: 29760, taxIncluded: 1, precautionsForPreservation: '防晒防潮', supplierNumber: 'AMER001', remarks: 'xx'};
     return result;
   }
 
@@ -62,7 +105,17 @@ function PurchaseRecordsAddAndEdit(props: any) {
 
   // 删除
   function confirmDelete() {
-
+    const hide = message.loading('正在处理...', 0);  // 显示正在处理
+    deletePurchaseRecord(id).then(response => {
+      hide(); // 隐藏正在处理
+      notification['success']({message: '删除进货记录成功', description: '编号: '+id});  // 显示成功
+      // 删除成功后跳转到列表
+      setTimeout(props.history.push(BaseParam.BASE_URL+'purchase-records/list'), 1000);
+    }).catch(reason => {
+      console.error(reason);
+      hide();
+      notification['error']({message: '发生了错误', description: reason.toString()});
+    });
   }
 
   // 价格和数量变动时自动计算总金额
@@ -87,7 +140,7 @@ function PurchaseRecordsAddAndEdit(props: any) {
         onValuesChange={onPriceAndNumChange}
         scrollToFirstError
         size={FormInputSize}
-        initialValues={{taxIncluded: '是'}}
+        initialValues={{taxIncluded: 1}}
       >
         <PageHeader
           title={isEdit ? <Space size={"large"}>修改进货记录<small>编号: {id}</small></Space> : "录入进货记录"}
@@ -130,7 +183,7 @@ function PurchaseRecordsAddAndEdit(props: any) {
               }
             ]}
           >
-            <DatePicker format={DateFormat.monthFormat} picker={'month'}/>
+            <DatePicker format={DateFormat.monthFormat} picker={'month'} inputReadOnly/>
           </Form.Item>
           <GoodsSearchAndShowByNumber
             showPrice={true}
@@ -235,14 +288,13 @@ function PurchaseRecordsAddAndEdit(props: any) {
             name={"taxIncluded"}
           >
             <Select>
-              <Option value={'是'}>是</Option>
-              <Option value={'否'}>否</Option>
+              <Option value={1}>是</Option>
+              <Option value={0}>否</Option>
             </Select>
           </Form.Item>
           <Form.Item
             label={"保存注意事项"}
             name={"precautionsForPreservation"}
-            hasFeedback
           >
             <Input.TextArea
               autoSize={{ minRows: 2, maxRows: 6 }}
@@ -252,7 +304,6 @@ function PurchaseRecordsAddAndEdit(props: any) {
           <Form.Item
             label={"备注"}
             name={"remarks"}
-            hasFeedback
           >
             <Input.TextArea
               autoSize={{ minRows: 2, maxRows: 6 }}
