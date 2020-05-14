@@ -3,7 +3,8 @@ import axios from "axios";
 import {BaseParam} from "../util/config";
 
 
-axios.defaults.baseURL = BaseParam.API_URL;
+// axios.defaults.baseURL = BaseParam.API_URL;
+axios.defaults.baseURL = '';
 axios.defaults.withCredentials = true;
 axios.defaults.headers.get['Content-Type'] = 'application/x-www-form-urlencoded';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
