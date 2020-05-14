@@ -85,4 +85,18 @@ interface PurchaseRecordInfo {
   remarks: string;
 }
 
-export {GoodsAddFormData, SupplierInfo, ClientInfo, GoodsInfo, PurchaseRecordInfo};
+interface OrderInfo {
+  orderNumber: string;
+  state: string;
+  salesPerson: string;
+  clientNumber: string;
+  writeAnInvoice: number;
+  goodsNumber: string;
+  finalPrice: number;
+  numbers: number;
+  totalAmount: number;
+  typeOfPayment: string;
+  typeOfShipping: string;
+}
+
+export {GoodsAddFormData, SupplierInfo, ClientInfo, GoodsInfo, PurchaseRecordInfo, OrderInfo};

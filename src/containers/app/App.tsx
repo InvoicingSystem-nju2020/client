@@ -54,6 +54,7 @@ const App: React.FC = () => {
                   <RouterSwitch>
                     <Route path="/orders/list" component={OrdersList}/>
                     <Route path="/orders/add" component={OrdersAddAndEdit}/>
+                    <Route path="/orders/edit/:orderNumber" component={OrdersAddAndEdit}/>
                     <Redirect to="/orders/list"/>
                   </RouterSwitch>
                 </Route>

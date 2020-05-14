@@ -12,8 +12,8 @@ const { Option } = Select;
 
 const SuppliersAddAndEdit: React.FC = (props:any) => {
   const [form] = Form.useForm();
-  const [supplierInfoToEdit, setSupplierInfoToEdit] = useState<SupplierInfo>();
   // 修改模式
+  const [supplierInfoToEdit, setSupplierInfoToEdit] = useState<SupplierInfo>();
   const supplierNumber: string = props.match.params.supplierNumber;
   const isEdit: boolean = !!supplierNumber;
 

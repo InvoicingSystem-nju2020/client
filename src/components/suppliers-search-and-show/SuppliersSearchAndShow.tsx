@@ -21,12 +21,18 @@ class SupplierInfo{
   }
 }
 
-const SupplierSearchAndShow = (props:any) => {
+interface SuppliersSearchAndShowProps {
+  supplierNumberToShow?: string;
+  isResetting?: any;
+  setIsResetting?: any;
+}
+
+const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
   const [options, setOptions] = useState<SelectProps<object>['options']>([]);
   const [supplierInfosResult, setSupplierInfosResult] = useState<SupplierInfo[]>([]);
   const [selectedSupplierNumber, setSelectedSupplierNumber] = useState<string>('');
   const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');
-  const supplierNumberToShow: string = props.supplierNumberToShow;  // 是否指定预先显示的商品编号
+  const supplierNumberToShow = props.supplierNumberToShow;  // 是否指定预先显示的商品编号
   const isResetting = props.isResetting;  // 重置状态，状态提升
   const setIsResetting = props.setIsResetting;
 

@@ -30,14 +30,20 @@ class GoodsInfo{
   }
 }
 
+interface GoodsSearchAndShowByNumberProps {
+  showPrice?: boolean;
+  goodsNumberToShow?: string;
+  isResetting?: any;
+  setIsResetting?: any;
+}
 
-const GoodsSearchAndShowByNumber = (props:any) => {
+const GoodsSearchAndShowByNumber = (props:GoodsSearchAndShowByNumberProps) => {
   const [options, setOptions] = useState<SelectProps<object>['options']>([]);   // 选项
   const [goodsInfosResult, setGoodsInfosResult] = useState<GoodsInfo[]>([]);  // 商品信息搜索结果
   const [selectedGoodsNumber, setSelectedGoodsNumber] = useState<string>(''); // 已选择的商品编号
   const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');  // 表单验证状态
   const showPrice: boolean = props.showPrice ? true : false; // 是否显示价格
-  const goodsNumberToShow: string = props.goodsNumberToShow;  // 是否指定预先显示的商品编号
+  const goodsNumberToShow = props.goodsNumberToShow;  // 是否指定预先显示的商品编号
   const isResetting = props.isResetting;  // 重置状态，状态提升
   const setIsResetting = props.setIsResetting;
 
