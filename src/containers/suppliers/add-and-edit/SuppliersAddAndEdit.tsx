@@ -1,11 +1,24 @@
 import React, {useState, useEffect} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, Space, Popconfirm} from "antd";
+import {
+  Button,
+  InputNumber,
+  Input,
+  AutoComplete,
+  PageHeader,
+  Select,
+  Space,
+  Popconfirm,
+  message,
+  notification
+} from "antd";
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { FormItemLayout, FormInputSize, Regex } from "../../../util/ComponentsUtil";
+import {BaseParam} from "../../../util/config";
 import { SupplierInfo } from "../../../api/data";
+import {addSupplier, deleteSupplier, editSupplier, getSupplierByNumber} from "../../../api/SupplierApi";
 
 const { Option } = Select;
 
@@ -21,6 +34,22 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
+        // 调用接口
+        let supplier = (values as any);
+        let api = isEdit ? editSupplier(supplierNumber, supplier) : addSupplier(supplier);
+        const hide = message.loading('正在处理...', 0);  // 显示正在处理
+        api.then((response) => {
+          console.log(response);
+          const data = response.data;
+          hide(); // 隐藏正在处理
+          notification['success']({message: '操作成功', description: '客户编号: '+data});  // 显示成功
+          // 操作成功后跳转到列表
+          setTimeout(props.history.push(BaseParam.BASE_URL+'suppliers/list'), 1000);
+        }).catch(reason => {
+          console.error(reason);
+          hide();
+          notification['error']({message: '发生了错误', description: reason.toString()});
+        });
       });
   };
 
@@ -30,17 +59,30 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
       return;
     }
     // 获取原本的信息
-    let info = getSupplierInfo(supplierNumber);
-    setSupplierInfoToEdit(info);
-    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    const hideMessage = message.loading('正在加载供应商信息...', 0);
+    let api_getSupplierByNumber = getSupplierByNumber(supplierNumber);
+    api_getSupplierByNumber.then(response => {
+      let info = response.data;
+      setSupplierInfoToEdit(info);
+      form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideMessage();
+    });
+
+    // // 获取原本的信息
+    // let info = getSupplierInfo(supplierNumber);
+    // setSupplierInfoToEdit(info);
+    // form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
   }, [])
 
-  // 获取要被修改的信息
-  function getSupplierInfo(supplierNumber: string) {
-    let result: SupplierInfo;
-    result = {supplierNumber: 'LINING001', supplierName: '李宁（北京）体育用品有限公司', contactInformation:'18000000000', remarks: '一般合作商', productionCategory: '运动鞋服', purchasingCategories: '羽球系列', legalPerson: '李宁', contact: '陈', sex: '男', post: '区域经理', mail: 'xxx@a.com'};
-    return result;
-  }
+  // // 获取要被修改的信息
+  // function getSupplierInfo(supplierNumber: string) {
+  //   let result: SupplierInfo;
+  //   result = {supplierNumber: 'LINING001', supplierName: '李宁（北京）体育用品有限公司', contactInformation:'18000000000', remarks: '一般合作商', productionCategory: '运动鞋服', purchasingCategories: '羽球系列', legalPerson: '李宁', contact: '陈', sex: '男', post: '区域经理', mail: 'xxx@a.com'};
+  //   return result;
+  // }
 
   // 重置表单
   function resetForm() {
@@ -54,6 +96,17 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
 
   // 删除
   function confirmDelete() {
+    const hide = message.loading('正在处理...', 0);  // 显示正在处理
+    deleteSupplier(supplierNumber).then(response => {
+      notification['success']({message: '删除供应商成功', description: '编号: '+response.data});  // 显示成功
+      // 删除成功后跳转到列表
+      setTimeout(props.history.push(BaseParam.BASE_URL+'suppliers/list'), 1000);
+    }).catch(reason => {
+      console.error(reason);
+      notification['error']({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hide(); // 隐藏正在处理
+    });
 
   }
 
