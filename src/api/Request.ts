@@ -2,6 +2,7 @@ import axios from "axios";
 
 import {BaseParam} from "../util/config";
 
+const qs = require('qs');
 
 // axios.defaults.baseURL = BaseParam.API_URL;
 axios.defaults.baseURL = '';
@@ -15,7 +16,10 @@ axios.defaults.responseType = 'json';
 
 function Get(url:string, params:any) {
   return axios.get(url, {
-    params: params
+    params: params,
+    paramsSerializer: function(params) {
+      return qs.stringify(params, {arrayFormat: 'repeat'});   // 转换数组为标准形式, a=1&a=2&a=3
+    }
   });
 };
 
