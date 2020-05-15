@@ -67,6 +67,9 @@ function GoodsAddAndEdit(props: any) {
         {...FormItemLayout}
         onFinish={onFinish}
         size={FormInputSize}
+        initialValues={{
+          weightUnit: 'g'
+        }}
       >
         <PageHeader
           title={isEdit ? <Space size={"large"}>修改商品<small>编号: {goodsNumber}</small></Space> : "录入商品"}
@@ -278,7 +281,7 @@ function GoodsAddAndEdit(props: any) {
                 name={'weightUnit'}
                 noStyle
               >
-                <Select defaultValue={'g'}>
+                <Select>
                   <Option value={'g'}>g</Option>
                   <Option value={'kg'}>kg</Option>
                   <Option value={'t'}>t</Option>
