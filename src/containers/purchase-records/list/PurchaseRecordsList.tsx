@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 
-import {Form, Row, Col, PageHeader, Input, Button, InputNumber} from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, InputNumber, notification} from 'antd';
 import { Table } from 'antd';
 import { DatePicker } from 'antd';
 import 'moment/locale/zh-cn';
@@ -10,6 +10,8 @@ import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import { DateFormat } from "../../../util/ComponentsUtil";
+import {getPurchaseRecords, GetPurchaseRecordsParams} from "../../../api/PurchaseRecordApi";
+import {FormInstance} from "antd/es/form";
 
 // 表格列
 const { Column } = Table;
@@ -18,26 +20,26 @@ const { RangePicker } = DatePicker;
 
 // 商品信息
 class PurchaseRecordInfo {
-  id: string
-  purchaseTime: string
-  createTime: string
-  goodsNumber: string
-  brand: string
-  abbreviation: string
-  model: string
-  goodsNo: string
-  material: string
-  unit: string
-  numbers: number
-  retailPrice: number
-  discount: number
-  unitPrice: number
-  totalAmount: number
-  taxIncluded: string
-  precautionsForPreservation: string
-  remarks: string
-  supplierNumber: string
-  supplierName: string
+  id: string;
+  purchaseTime: string;
+  createTime: string;
+  goodsNumber: string;
+  brand: string;
+  abbreviation: string;
+  model: string;
+  goodsNo: string;
+  material: string;
+  unit: string;
+  numbers: number;
+  retailPrice: number;
+  discount: number;
+  unitPrice: number;
+  totalAmount: number;
+  taxIncluded: string;
+  precautionsForPreservation: string;
+  remarks: string;
+  supplierNumber: string;
+  supplierName: string;
 
   constructor(id: string, purchaseTime: string, createTime: string, goodsNumber: string, brand: string, abbreviation: string, model: string, goodsNo: string, material: string, unit: string, numbers: number, retailPrice: number, discount: number, unitPrice: number, totalAmount: number, taxIncluded: string, precautionsForPreservation: string, remarks: string, supplierNumber: string, supplierName: string) {
     this.id = id;
@@ -116,40 +118,60 @@ const conditions = [
     label='数量'
   >
     <Input.Group compact>
-      <InputNumber name={'minNumbers'} placeholder={'最小数量'} style={{width:'50%'}}/>
-      <InputNumber name={'maxNumbers'} placeholder={'最大数量'} style={{width:'50%'}}/>
+      <Form.Item name='minNumbers' noStyle>
+        <InputNumber placeholder={'最小数量'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name='maxNumbers' noStyle>
+        <InputNumber placeholder={'最大数量'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>,
   <Form.Item
     label='零售价'
   >
     <Input.Group compact>
-      <InputNumber name={'minRetailPrice'} placeholder={'最低零售价'} style={{width:'50%'}}/>
-      <InputNumber name={'maxRetailPrice'} placeholder={'最高零售价'} style={{width:'50%'}}/>
+      <Form.Item name='minRetailPrice' noStyle>
+        <InputNumber placeholder={'最低零售价'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name='maxRetailPrice' noStyle>
+        <InputNumber placeholder={'最高零售价'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>,
   <Form.Item
     label='折扣'
   >
     <Input.Group compact>
-      <InputNumber name={'minDiscount'} placeholder={'最低折扣'} style={{width:'50%'}}/>
-      <InputNumber name={'maxDiscount'} placeholder={'最高折扣'} style={{width:'50%'}}/>
+      <Form.Item name='minDiscount' noStyle>
+        <InputNumber placeholder={'最低折扣'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name='maxDiscount' noStyle>
+        <InputNumber placeholder={'最高折扣'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>,
   <Form.Item
     label='单价'
   >
     <Input.Group compact>
-      <InputNumber name={'minUnitPrice'} placeholder={'最低单价'} style={{width:'50%'}}/>
-      <InputNumber name={'maxUnitPrice'} placeholder={'最高单价'} style={{width:'50%'}}/>
+      <Form.Item name='minUnitPrice' noStyle>
+        <InputNumber placeholder={'最低单价'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name='maxUnitPrice' noStyle>
+        <InputNumber placeholder={'最高单价'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>,
   <Form.Item
     label='总金额'
   >
     <Input.Group compact>
-      <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
-      <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
+      <Form.Item name='minTotalAmount' noStyle>
+        <InputNumber placeholder={'最低总金额'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name='maxRetailPrice' noStyle>
+        <InputNumber placeholder={'最高总金额'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>
 ];
@@ -159,21 +181,33 @@ function PurchaseRecordsList() {
   let [data, setData] = useState<PurchaseRecordInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
   let types: string[] = ['团购', '批发'];   // 所有商品种类
+  // 获取list的筛选参数
+  let params: GetPurchaseRecordsParams = {};
 
   let pageSize: number = 20;
 
   // 获取商品列表
   function getPurchaseRecordsList() {
-    let temp:PurchaseRecordInfo[] = [
-      new PurchaseRecordInfo('PR00000001', '2019/04', '2019/04/26',
-        'xxxxxxxx', 'wilson', '网球拍', 'pro staff',
-        'WRT74181U2', '碳纤维', '支', 24, 2480, 0.5,
-        1240, 29760, '是', '防晒防潮',
-        '', 'AMER001', 'amer')
-    ];
-    setData(temp);
+    // let temp:PurchaseRecordInfo[] = [
+    //   new PurchaseRecordInfo('PR00000001', '2019/04', '2019/04/26',
+    //     'xxxxxxxx', 'wilson', '网球拍', 'pro staff',
+    //     'WRT74181U2', '碳纤维', '支', 24, 2480, 0.5,
+    //     1240, 29760, '是', '防晒防潮',
+    //     '', 'AMER001', 'amer')
+    // ];
+    // setData(temp);
+    let api = getPurchaseRecords(params);
+    setLoading(true);
+    api.then(response => {
+      console.log(response);
+    }).catch(reason => {
+      console.error(reason);
+      notification.error({message: '发生了错误', description: reason.toString()});
+      setLoading(false);
+    })
     setLoading(false);
   }
+
   // 加载时获取一次商品列表
   useEffect(() => {
     getPurchaseRecordsList();
@@ -181,7 +215,26 @@ function PurchaseRecordsList() {
 
   // 处理表格变化
   function handleTableChange (pagination:any, filters:any, sorter:any) {
+    console.log(filters);
+    console.log(sorter);
+    // 是否含税筛选
+    if(filters.taxIncluded){
+      if(filters.taxIncluded.length === 1){
+        params.taxIncluded = filters.taxIncluded[0];
+      }else{  // 含税和不含税，即全部
+        params.taxIncluded = undefined;
+      }
+    }
+    // 排序
+    params.sorter = sorter.field;
+    params.desc = sorter.order === 'descend' ? 1 : 0;
+    console.log(params);
+  }
 
+  // 处理搜索栏
+  function onSearchFormFinish(name: string, info: any) {
+    console.log(info);
+    params = info.values;
   }
 
   return(
@@ -199,7 +252,9 @@ function PurchaseRecordsList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions}/>
+          <Form.Provider onFormFinish={onSearchFormFinish}>
+            <AdvancedSearchForm conditions={conditions}/>
+          </Form.Provider>
         </div>
         <Table dataSource={data} rowKey={'id'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
