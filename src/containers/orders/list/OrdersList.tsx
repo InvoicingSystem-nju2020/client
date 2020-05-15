@@ -1,7 +1,20 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 
-import {Form, Row, Col, PageHeader, Input, Button, InputNumber, Popconfirm, Select, Popover, notification} from 'antd';
+import {
+  Form,
+  Row,
+  Col,
+  PageHeader,
+  Input,
+  Button,
+  InputNumber,
+  Popconfirm,
+  Select,
+  Popover,
+  notification,
+  message
+} from 'antd';
 import { Table } from 'antd';
 import { DatePicker } from 'antd';
 import 'moment/locale/zh-cn';
@@ -10,8 +23,8 @@ import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import { DateFormat } from "../../../util/ComponentsUtil";
-import {getPurchaseRecords, GetPurchaseRecordsParams} from "../../../api/PurchaseRecordApi";
-import {getOrders, GetOrdersParams} from "../../../api/OrderApi";
+import {getOrders, GetOrdersParams, updateOrderState} from "../../../api/OrderApi";
+import {BaseParam} from "../../../util/config";
 
 // 表格列
 const { Column } = Table;
@@ -127,12 +140,14 @@ const conditions = [
 ];
 
 
-function OrdersList() {
+function OrdersList(props: any) {
   let [data, setData] = useState<OrderInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
   let orderStates: string[] = ['已售', '赊账中', '已到账']; // 订单的状态
   // 获取list的筛选参数
   const [params, setParams] = useState<GetOrdersParams>({});
+  // 获取选择的行
+  const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   let pageSize: number = 20;
 
@@ -211,6 +226,40 @@ function OrdersList() {
     getOrdersList();
   }
 
+  // 处理表格行选中的变化
+  function onRowSelectionsChange(selectedRowKeys: any, selectedRows: any) {
+    // console.log(selectedRowKeys);
+    setSelectedRowKeys(selectedRowKeys);
+  }
+
+  // 处理单个订单状态更新表单的提交
+  function onSingleStateFormFinish(values: any) {
+    updateStates([values.orderNumber], values.newState);
+  }
+  // 处理批量更新订单状态表单的提交
+  function onMultiStateFormFinish(values: any) {
+    if(selectedRowKeys.length === 0){
+      message.warning('请选择需要更新状态的订单');
+      return;
+    }
+    updateStates(selectedRowKeys, values.newState);
+  }
+
+  // 更新订单状态
+  function updateStates(orderNumberList: string[], state: string) {
+    const hideLoading = message.loading('正在更新订单状态...', 0);
+    const api_updateOrdersState = updateOrderState(orderNumberList, state);
+    api_updateOrdersState.then(response => {
+      notification.success({message: '更新订单状态成功', description: '订单编号: '+response.data.toString()});
+      // 操作成功刷新
+      setTimeout(props.history.push(BaseParam.BASE_URL+'orders/list'), 1000);
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideLoading();
+    });
+  }
+
   return(
     <div>
       <PageHeader
@@ -234,7 +283,8 @@ function OrdersList() {
                onChange={handleTableChange}
                rowSelection={{
                  fixed: true,
-                 type: 'checkbox'
+                 type: 'checkbox',
+                 onChange: onRowSelectionsChange
                }}
                expandable={{
                  expandedRowRender: info =>
@@ -320,8 +370,15 @@ function OrdersList() {
                              }
                              trigger="click"
                              content={
-                               <Form size={'small'}>
-                                 <Form.Item name={'newState'} label={'更新为'}>
+                               <Form size={'small'} onFinish={onMultiStateFormFinish}>
+                                 <Form.Item name={'newState'} label={'更新为'}
+                                            rules={[
+                                              {
+                                                required: true,
+                                                message: '请选择新的状态'
+                                              }
+                                            ]}
+                                 >
                                    <Select>
                                      <Select.Option value={'已售'}>已售</Select.Option>
                                      <Select.Option value={'赊账中'}>赊账中</Select.Option>
@@ -354,8 +411,23 @@ function OrdersList() {
                                }
                                trigger="click"
                                content={
-                                 <Form size={'small'}>
-                                   <Form.Item name={'newState'} label={'更新为'}>
+                                 <Form size={'small'} onFinish={onSingleStateFormFinish}>
+                                   <Form.Item
+                                     name={'orderNumber'}
+                                     initialValue={info.orderNumber}
+                                     noStyle
+                                     style={{display: 'none'}}
+                                   >
+                                     <Input hidden />
+                                   </Form.Item>
+                                   <Form.Item name={'newState'} label={'更新为'}
+                                              rules={[
+                                                {
+                                                  required: true,
+                                                  message: '请选择新的状态'
+                                                }
+                                              ]}
+                                   >
                                      <Select>
                                        <Select.Option value={'已售'}>已售</Select.Option>
                                        <Select.Option value={'赊账中'}>赊账中</Select.Option>
