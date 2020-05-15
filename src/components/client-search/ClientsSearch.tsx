@@ -35,6 +35,7 @@ const ClientSearch = (props:ClientSearchProps) => {
   const clientNumber = props.clientNumber;  // 是否指定预先显示的客户编号
   const isResetting = props.isResetting;  // 重置状态，状态提升
   const setIsResetting = props.setIsResetting;
+  // 已选客户编号，状态提升，使得form能获取到编号
 
   // 组件加载时判断是否需要预先显示商品
   useEffect(() => {
@@ -46,6 +47,13 @@ const ClientSearch = (props:ClientSearchProps) => {
       setIsResetting(false);
     }
   },[clientNumber, isResetting]);
+
+  // selectedClientNumber变化时，更新表单中clientNumber的隐藏项
+  useEffect(() => {
+    props.form?.setFieldsValue({
+      clientNumber: isRetail ? '0' : selectedClientNumber
+    });
+  }, [selectedClientNumber, isRetail]);
 
   // 重置
   const reset = () => {
@@ -178,6 +186,9 @@ const ClientSearch = (props:ClientSearchProps) => {
                 >
                   <Input.Search size={FormInputSize} placeholder="输入客户名称搜索"/>
                 </AutoComplete>
+              </Form.Item>
+              <Form.Item name={'clientNumber'} noStyle style={{display: 'none'}}>
+                <Input hidden/>
               </Form.Item>
             </span>
         }

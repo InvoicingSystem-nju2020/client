@@ -1,6 +1,17 @@
 import React, {useEffect, useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, DatePicker, Space, Popconfirm} from "antd";
+import {
+  Button,
+  InputNumber,
+  Input,
+  AutoComplete,
+  PageHeader,
+  Select,
+  DatePicker,
+  Space,
+  Popconfirm,
+  message, notification
+} from "antd";
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
@@ -11,6 +22,14 @@ import GoodsSearchAndShowByNumber from "../../../components/goods-search-and-sho
 import ClientSearch from "../../../components/client-search/ClientsSearch";
 import {SelectProps} from "antd/es/select";
 import {OrderInfo, SupplierInfo} from "../../../api/data";
+import {
+  addPurchaseRecords,
+  deletePurchaseRecord,
+  editPurchaseRecord,
+  getPurchaseRecordById
+} from "../../../api/PurchaseRecordApi";
+import {BaseParam} from "../../../util/config";
+import {addOrder, deleteOrder, editOrder, getOrderByNumber} from "../../../api/OrderApi";
 
 
 const { Option } = Select;
@@ -31,6 +50,28 @@ function OrdersAddAndEdit(props: any) {
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
+        let order = (values as any);
+        // 处理数据
+        if(isEdit){ // 编号
+          order.orderNumber = orderNumber;
+        }
+        order.clientName = undefined; // 接口里不需要客户名称
+        // 选择新增还是修改的api
+        let api = isEdit ? editOrder(orderNumber, order) : addOrder(order);
+
+        const hide = message.loading('正在处理...', 0);  // 显示正在处理
+        api.then((response) => {
+          console.log(response);
+          const data = response.data;
+          hide(); // 隐藏正在处理
+          notification['success']({message: '操作成功', description: '订单编号: '+data});  // 显示成功
+          // 操作成功后跳转到列表
+          setTimeout(props.history.push(BaseParam.BASE_URL+'orders/list'), 1000);
+        }).catch(reason => {
+          console.error(reason);
+          hide();
+          notification['error']({message: '发生了错误', description: reason.toString()});
+        });
       });
   };
 
@@ -40,17 +81,28 @@ function OrdersAddAndEdit(props: any) {
       return;
     }
     // 获取原本的信息
-    let info = getOrderInfo(orderNumber);
-    setOrderInfoToEdit(info);
-    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    const hideMessage = message.loading('正在加载订单...', 0);
+    let api_getOrderByNumber = getOrderByNumber(orderNumber);
+    api_getOrderByNumber.then(response => {
+      let info = response.data;
+      setOrderInfoToEdit(info);  // 记录要被修改的原有信息
+      form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideMessage();
+    });
+    // let info = getOrderInfo(orderNumber);
+    // setOrderInfoToEdit(info);
+    // form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
   }, [])
 
-  // 获取要被修改的信息
-  function getOrderInfo(orderNumber: string) {
-    let result: OrderInfo;
-    result = {orderNumber: 'xxxxxx01', salesPerson: '张三', clientNumber: 'TFS2010-001', writeAnInvoice: 1, goodsNumber: 'WQP00001', finalPrice: 2480, numbers: 2, totalAmount: 4960, typeOfPayment: '预支付', typeOfShipping: '自提', state: '已完成'};
-    return result;
-  }
+  // // 获取要被修改的信息
+  // function getOrderInfo(orderNumber: string) {
+  //   let result: OrderInfo;
+  //   result = {orderNumber: 'xxxxxx01', salesPerson: '张三', clientNumber: 'TFS2010-001', writeAnInvoice: 1, goodsNumber: 'WQP00001', finalPrice: 2480, numbers: 2, totalAmount: 4960, typeOfPayment: '预支付', typeOfShipping: '自提', state: '已完成'};
+  //   return result;
+  // }
 
   // 重置表单
   function resetForm() {
@@ -66,7 +118,17 @@ function OrdersAddAndEdit(props: any) {
 
   // 删除
   function confirmDelete() {
-
+    const hide = message.loading('正在处理...', 0);  // 显示正在处理
+    deleteOrder(orderNumber).then(response => {
+      hide(); // 隐藏正在处理
+      notification['success']({message: '删除订单成功', description: '编号: '+orderNumber});  // 显示成功
+      // 删除成功后跳转到列表
+      setTimeout(props.history.push(BaseParam.BASE_URL+'orders/list'), 1000);
+    }).catch(reason => {
+      console.error(reason);
+      hide();
+      notification['error']({message: '发生了错误', description: reason.toString()});
+    });
   }
 
   // 价格和数量变化
@@ -309,7 +371,6 @@ function OrdersAddAndEdit(props: any) {
           <Form.Item
             label={"订单状态"}
             name={"state"}
-            hasFeedback
             rules={[
               {
                 required: true,
