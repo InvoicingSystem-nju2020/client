@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 
-import {Form, Row, Col, PageHeader, Input, Button, InputNumber, Popconfirm, Select, Popover} from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, InputNumber, Popconfirm, Select, Popover, notification} from 'antd';
 import { Table } from 'antd';
 import { DatePicker } from 'antd';
 import 'moment/locale/zh-cn';
@@ -10,6 +10,8 @@ import { EditOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import { DateFormat } from "../../../util/ComponentsUtil";
+import {getPurchaseRecords, GetPurchaseRecordsParams} from "../../../api/PurchaseRecordApi";
+import {getOrders, GetOrdersParams} from "../../../api/OrderApi";
 
 // 表格列
 const { Column } = Table;
@@ -93,8 +95,8 @@ const conditions = [
     <Input />
   </Form.Item>,
   <Form.Item
-    name='client'
-    label='客户'
+    name='clientName'
+    label='客户名称'
   >
     <Input />
   </Form.Item>,
@@ -114,8 +116,12 @@ const conditions = [
     label='总金额'
   >
     <Input.Group compact>
-      <InputNumber name={'minTotalAmount'} placeholder={'最低总金额'} style={{width:'50%'}}/>
-      <InputNumber name={'maxRetailPrice'} placeholder={'最高总金额'} style={{width:'50%'}}/>
+      <Form.Item name={'minTotalAmount'} noStyle>
+        <InputNumber placeholder={'最低总金额'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name={'maxTotalAmount'} noStyle>
+        <InputNumber placeholder={'最高总金额'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>
 ];
@@ -125,28 +131,84 @@ function OrdersList() {
   let [data, setData] = useState<OrderInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
   let orderStates: string[] = ['已售', '赊账中', '已到账']; // 订单的状态
+  // 获取list的筛选参数
+  const [params, setParams] = useState<GetOrdersParams>({});
 
   let pageSize: number = 20;
 
   // 获取商品列表
-  function getPurchaseRecordsList() {
-    let temp:OrderInfo[] = [
-      new OrderInfo('xx00000001', '已售', '2019/04/26',
-        '12:07', '南京海关', '张三', 1,
-        'YQP00001', 'LINING', '羽球拍', 'WRT74181U2', 2480, 0.5,
-        1240, '支', 4, 4960, '预付', '自提')
-    ];
-    setData(temp);
-    setLoading(false);
+  function getOrdersList() {
+    let api = getOrders(params);
+    setLoading(true);
+    api.then(response => {
+      console.log(response);
+      let list = response.data.ordersList;
+      setData(list);
+    }).catch(reason => {
+      console.error(reason);
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      setLoading(false);
+    });
+    // let temp:OrderInfo[] = [
+    //   new OrderInfo('xx00000001', '已售', '2019/04/26',
+    //     '12:07', '南京海关', '张三', 1,
+    //     'YQP00001', 'LINING', '羽球拍', 'WRT74181U2', 2480, 0.5,
+    //     1240, '支', 4, 4960, '预付', '自提')
+    // ];
+    // setData(temp);
+    // setLoading(false);
   }
   // 加载时获取一次商品列表
   useEffect(() => {
-    getPurchaseRecordsList();
+    getOrdersList();
   }, []);
 
   // 处理表格变化
   function handleTableChange (pagination:any, filters:any, sorter:any) {
+    console.log(filters);
+    console.log(sorter);
+    // 是否含税筛选
+    if(filters.state){
+      if(filters.state.length >= 1){
+        params.state = filters.state;
+      }else{  // 含税和不含税，即全部
+        params.state = undefined;
+      }
+    }
+    // 是否开发票筛选
+    if(filters.writeAnInvoice){
+      if(filters.writeAnInvoice.length === 1){
+        params.writeAnInvoice = filters.writeAnInvoice[0];
+      }else{  // 含税和不含税，即全部
+        params.writeAnInvoice = undefined;
+      }
+    }
+    // 排序
+    params.sorter = sorter.field;
+    params.desc = sorter.order === 'descend' ? 1 : 0;
 
+    console.log(params);
+    // 获取列表
+    getOrdersList();
+  }
+
+  // 处理搜索栏
+  function onSearchFormFinish(name: string, info: any) {
+    console.log(info);
+    // 组装数据
+    // 处理日期区间
+    let createTime: any[] = info.values.createTime;
+    if(createTime){
+      info.values.startTime = createTime[0] === null ? undefined : createTime[0].format(DateFormat.dateFormat);
+      info.values.endTime = createTime[1] === null ? undefined : createTime[1].format(DateFormat.dateFormat);
+      info.values.createTime = undefined;
+    }
+
+    Object.assign(params, info.values);
+    console.log("params", params);
+    // 获取列表
+    getOrdersList();
   }
 
   return(
@@ -164,7 +226,9 @@ function OrdersList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions}/>
+          <Form.Provider onFormFinish={onSearchFormFinish}>
+            <AdvancedSearchForm conditions={conditions}/>
+          </Form.Provider>
         </div>
         <Table dataSource={data} rowKey={'orderNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
