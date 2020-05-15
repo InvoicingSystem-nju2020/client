@@ -29,7 +29,6 @@ const ClientSearch = (props:ClientSearchProps) => {
   const [options, setOptions] = useState<SelectProps<object>['options']>([]); // 选项
   const [clientInfosResult, setClientInfosResult] = useState<ClientInfo[]>([]);
   const [selectedClientNumber, setSelectedClientNumber] = useState<string>('');
-  const [clientName, setClientName] = useState<string>('');
   const [isRetail, setIsRetail] = useState<number>(1);
   const [validateStatus, setValidateStatus] = useState<FormItemProps['validateStatus']>('');  // 校验状态
 
@@ -109,7 +108,6 @@ const ClientSearch = (props:ClientSearchProps) => {
 
   // 处理搜索输入
   const handleSearch = (value: string) => {
-    console.log(clientName);
     if(value){
       let results = searchResult(value);
       setOptions(results);
