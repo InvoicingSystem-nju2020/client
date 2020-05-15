@@ -178,7 +178,7 @@ const ClientSearch = (props:ClientSearchProps) => {
                   backfill
                   style={{width: '70%'}}
                 >
-                  <Input.Search size={FormInputSize} placeholder="输入供应商编号搜索"/>
+                  <Input.Search size={FormInputSize} placeholder="输入客户名称搜索"/>
                 </AutoComplete>
               </Form.Item>
             </span>
