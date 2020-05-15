@@ -73,9 +73,10 @@ const conditions = [
   >
     <RangePicker
       allowEmpty={[true, true]}
-      format={DateFormat.dateFormat}
+      format={DateFormat.monthFormat}
       allowClear
       picker={'month'}
+      inputReadOnly
       style={{width: '100%', textAlign: 'center'}}
     />
   </Form.Item>,
@@ -87,6 +88,7 @@ const conditions = [
       allowEmpty={[true, true]}
       format={DateFormat.dateFormat}
       allowClear
+      inputReadOnly
       style={{width: '100%', textAlign: 'center'}}
     />
   </Form.Item>,
@@ -240,6 +242,20 @@ function PurchaseRecordsList() {
   function onSearchFormFinish(name: string, info: any) {
     console.log(info);
     // 组装数据
+    // 处理日期选择
+    let purchaseTime: any[] = info.values.purchaseTime;
+    if(purchaseTime){
+      info.values.startPurchaseTime = purchaseTime[0] === null ? undefined : purchaseTime[0].format(DateFormat.monthFormat);
+      info.values.endPurchaseTime = purchaseTime[1] === null ? undefined : purchaseTime[1].format(DateFormat.monthFormat);
+      info.values.purchaseTime = undefined;
+    }
+    let createTime: any[] = info.values.createTime;
+    if(createTime){
+      info.values.startCreateTime = createTime[0] === null ? undefined : createTime[0].format(DateFormat.dateFormat);
+      info.values.endCreateTime = createTime[1] === null ? undefined : createTime[1].format(DateFormat.dateFormat);
+      info.values.createTime = undefined;
+    }
+
     Object.assign(params, info.values);
     console.log("params", params);
     // 获取列表

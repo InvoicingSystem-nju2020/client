@@ -42,19 +42,15 @@ function PurchaseRecordsAddAndEdit(props: any) {
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
-        // let purchaseRecord = {
-        //   purchaseTime: values.purchaseTime,
-        //   goodsNumber: values.goodsNumber,
-        //   numbers: values.numbers,
-        //   discount: values.discount,
-        //   unitPrice: values.unitPrice,
-        //   totalAmount: values.totalAmount,
-        //   taxIncluded: values
-        // }
         let purchaseRecord = (values as any);
-        if(isEdit){
+        // 处理数据
+        if(isEdit){ // id
           purchaseRecord.id = id;
         }
+        // 处理时间
+        purchaseRecord.purchaseTime = values.purchaseTime.format(DateFormat.monthFormat);
+
+        // 选择新增还是修改的api
         let api = isEdit ? editPurchaseRecord(id, purchaseRecord) : addPurchaseRecords(purchaseRecord);
 
         const hide = message.loading('正在处理...', 0);  // 显示正在处理
@@ -83,7 +79,9 @@ function PurchaseRecordsAddAndEdit(props: any) {
     let api_getPurchaseRecordById = getPurchaseRecordById(id);
     api_getPurchaseRecordById.then(response => {
       let info = response.data;
-      setPurchaseRecordInfoToEdit(info);
+      // 处理时间
+      info.purchaseTime = moment(info.purchaseTime, DateFormat.monthFormat);
+      setPurchaseRecordInfoToEdit(info);  // 记录要被修改的原有信息
       form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
     }).catch(reason => {
       notification.error({message: '发生了错误', description: reason.toString()});
