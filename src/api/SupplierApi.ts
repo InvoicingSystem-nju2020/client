@@ -18,7 +18,7 @@ export interface GetSuppliersParams {
 
 const SUPPLIER_API_URL = '/api/suppliers';
 
-// 录入进货记录
+// 录入供应商
 function addSupplier(supplier: SupplierInfo) {
   return Post(
     SUPPLIER_API_URL,
