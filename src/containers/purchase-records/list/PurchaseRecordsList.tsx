@@ -200,13 +200,15 @@ function PurchaseRecordsList() {
     setLoading(true);
     api.then(response => {
       console.log(response);
+      let list = response.data.purchaseRecordsList;
+      setData(list);
     }).catch(reason => {
       console.error(reason);
       notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
       setLoading(false);
-    })
-    setLoading(false);
-  }
+    });
+  };
 
   // 加载时获取一次商品列表
   useEffect(() => {
