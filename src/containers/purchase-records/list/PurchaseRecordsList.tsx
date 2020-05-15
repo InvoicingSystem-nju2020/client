@@ -182,7 +182,7 @@ function PurchaseRecordsList() {
   let [loading, setLoading] = useState(true);
   let types: string[] = ['团购', '批发'];   // 所有商品种类
   // 获取list的筛选参数
-  let params: GetPurchaseRecordsParams = {};
+  const [params, setParams] = useState<GetPurchaseRecordsParams>({});
 
   let pageSize: number = 20;
 
@@ -230,13 +230,20 @@ function PurchaseRecordsList() {
     // 排序
     params.sorter = sorter.field;
     params.desc = sorter.order === 'descend' ? 1 : 0;
+
     console.log(params);
+    // 获取列表
+    getPurchaseRecordsList();
   }
 
   // 处理搜索栏
   function onSearchFormFinish(name: string, info: any) {
     console.log(info);
-    params = info.values;
+    // 组装数据
+    Object.assign(params, info.values);
+    console.log("params", params);
+    // 获取列表
+    getPurchaseRecordsList();
   }
 
   return(
