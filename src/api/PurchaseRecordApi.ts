@@ -27,7 +27,7 @@ import {PurchaseRecordInfo} from "./data";
 //   num:number = 100;
 // }
 export interface GetPurchaseRecordsParams {
-    startPurchaseTime?: string;
+  startPurchaseTime?: string;
   endPurchaseTime?: string;
   startCreateTime?: string;
   endCreateTime?: string;

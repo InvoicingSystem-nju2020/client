@@ -57,13 +57,13 @@ function PurchaseRecordsAddAndEdit(props: any) {
         }
         let api = isEdit ? editPurchaseRecord(id, purchaseRecord) : addPurchaseRecords(purchaseRecord);
 
-        const hide = message.loading('正在处理...', 0);  // 显示正在新增
+        const hide = message.loading('正在处理...', 0);  // 显示正在处理
         api.then((response) => {
           console.log(response);
           const data = response.data;
-          hide(); // 隐藏正在新增
-          notification['success']({message: '录入进货记录成功', description: '编号: '+data});  // 显示成功
-          // 新增成功后跳转到列表
+          hide(); // 隐藏正在处理
+          notification['success']({message: '操作成功', description: '进货记录编号: '+data});  // 显示成功
+          // 操作成功后跳转到列表
           setTimeout(props.history.push(BaseParam.BASE_URL+'purchase-records/list'), 1000);
         }).catch(reason => {
           console.error(reason);
@@ -79,17 +79,28 @@ function PurchaseRecordsAddAndEdit(props: any) {
       return;
     }
     // 获取原本的信息
-    let info = getSupplierInfo(id);
-    setPurchaseRecordInfoToEdit(info);
-    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    const hideMessage = message.loading('正在加载进货记录...', 0);
+    let api_getPurchaseRecordById = getPurchaseRecordById(id);
+    api_getPurchaseRecordById.then(response => {
+      let info = response.data;
+      setPurchaseRecordInfoToEdit(info);
+      form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideMessage();
+    });
+    // let info = getPurchaseRecordInfo(id);
+    // setPurchaseRecordInfoToEdit(info);
+    // form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
   }, [])
 
-  // 获取要被修改的信息
-  function getSupplierInfo(supplierNumber: string) {
-    let result: PurchaseRecordInfo;
-    result = {id: 'PR00000001', purchaseTime: moment('2019/04', DateFormat.monthFormat), goodsNumber: 'WQP00001', numbers: 24, discount: 0.5, unitPrice: 1240, totalAmount: 29760, taxIncluded: 1, precautionsForPreservation: '防晒防潮', supplierNumber: 'AMER001', remarks: 'xx'};
-    return result;
-  }
+  // // 获取要被修改的信息
+  // function getPurchaseRecordInfo(id: string) {
+  //   let result: PurchaseRecordInfo;
+  //   result = {id: 'PR00000001', purchaseTime: moment('2019/04', DateFormat.monthFormat), goodsNumber: 'WQP00001', numbers: 24, discount: 0.5, unitPrice: 1240, totalAmount: 29760, taxIncluded: 1, precautionsForPreservation: '防晒防潮', supplierNumber: 'AMER001', remarks: 'xx'};
+  //   return result;
+  // }
 
   // 重置表单
   function resetForm() {
