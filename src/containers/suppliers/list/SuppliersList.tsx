@@ -17,7 +17,7 @@ class SupplierInfo {
   suppliersName: string
   contactInformation: string
   remarks: string
-  productionCategories: string
+  productionCategory: string
   purchasingCategories: string
   legalPerson: string
   contact: string
@@ -25,12 +25,12 @@ class SupplierInfo {
   post:string
   mail: string
 
-  constructor(suppliersNumber: string, suppliersName: string, contactInformation: string, remarks: string, productionCategories: string, purchasingCategories: string, legalPerson: string, contact: string, sex: string, post: string, mail: string) {
+  constructor(suppliersNumber: string, suppliersName: string, contactInformation: string, remarks: string, productionCategory: string, purchasingCategories: string, legalPerson: string, contact: string, sex: string, post: string, mail: string) {
     this.suppliersNumber = suppliersNumber;
     this.suppliersName = suppliersName;
     this.contactInformation = contactInformation;
     this.remarks = remarks;
-    this.productionCategories = productionCategories;
+    this.productionCategory = productionCategory;
     this.purchasingCategories = purchasingCategories;
     this.legalPerson = legalPerson;
     this.contact = contact;
@@ -174,7 +174,7 @@ function SuppliersList() {
         >
           <Column title={"供应商编号"} dataIndex={"supplierNumber"} sorter={true}/>
           <Column title={"名称"} dataIndex={"supplierName"} sorter={true}/>
-          <Column title={"生产类别"} dataIndex={"productionCategories"} sorter={true} />
+          <Column title={"生产类别"} dataIndex={"productionCategory"} sorter={true} />
           <Column title={"采购类别"} dataIndex={"purchasingCategories"}/>
           <Column title={"法人"} dataIndex={"legalPerson"}/>
           <Column title={"联系人"} dataIndex={"contact"}/>
