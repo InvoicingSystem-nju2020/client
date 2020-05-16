@@ -183,11 +183,11 @@ function OrdersList(props: any) {
   function handleTableChange (pagination:any, filters:any, sorter:any) {
     console.log(filters);
     console.log(sorter);
-    // 是否含税筛选
+    // 状态筛选
     if(filters.state){
       if(filters.state.length >= 1){
         params.state = filters.state;
-      }else{  // 含税和不含税，即全部
+      }else{  // 全部
         params.state = undefined;
       }
     }
@@ -195,7 +195,7 @@ function OrdersList(props: any) {
     if(filters.writeAnInvoice){
       if(filters.writeAnInvoice.length === 1){
         params.writeAnInvoice = filters.writeAnInvoice[0];
-      }else{  // 含税和不含税，即全部
+      }else{  // 是和否，即全部
         params.writeAnInvoice = undefined;
       }
     }
