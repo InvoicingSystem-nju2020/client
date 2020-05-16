@@ -1,23 +1,24 @@
 import React, {useEffect, useState} from "react";
 import {SelectProps} from "antd/es/select";
 import {FormItemProps} from "antd/es/form";
-import {AutoComplete, Card, Col, Form, Input, Row} from "antd";
+import {AutoComplete, Card, Col, Form, Input, notification, Row} from "antd";
 import {FormInputSize} from "../../util/ComponentsUtil";
+import {getSupplierByNumber, getSuppliers} from "../../api/SupplierApi";
 
 
 class SupplierInfo{
-  number: string;
-  name: string;
+  supplierNumber: string;
+  supplierName: string;
   productionCategory: string;
   remarks: string;
-  purchasingCategory: string;
+  purchasingCategories: string;
 
-  constructor(number: string, name: string, productionCategory: string, remarks: string, purchasingCategory: string) {
-    this.number = number;
-    this.name = name;
+  constructor(number: string, name: string, productionCategory: string, remarks: string, purchasingCategories: string) {
+    this.supplierNumber = number;
+    this.supplierName = name;
     this.productionCategory = productionCategory;
     this.remarks = remarks;
-    this.purchasingCategory = purchasingCategory;
+    this.purchasingCategories = purchasingCategories;
   }
 }
 
@@ -48,59 +49,93 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
 
   // 重置
   const reset = () => {
-    if(supplierNumberToShow){  // 需要预先显示商品
-      searchSupplier(supplierNumberToShow);
+    if(supplierNumberToShow){  // 需要预先显示供应商
+      // searchSupplier(supplierNumberToShow);
+      getSupplierInfo(supplierNumberToShow);
       selectAndShow(supplierNumberToShow);
     }
     else{
       setSelectedSupplierNumber('');
       setValidateStatus('error');
     }
-  }
+  };
 
-  // 搜索供应商
-  const searchSupplier = (query: string) => {
-    let result = [
-      new SupplierInfo('LINING01', '李宁（北京）体育用品有限公司',
-        '运动鞋服、体育器材', '一般合作商', '羽球系列'),
-      new SupplierInfo('WILSON01', 'WILSON',
-        '体育器材', '', '羽球系列')
-    ];
-    setSupplierInfosResult(result);
-    return result;
+  // // 搜索供应商
+  // const searchSupplier = (query: string) => {
+  //   let result = [
+  //     new SupplierInfo('LINING01', '李宁（北京）体育用品有限公司',
+  //       '运动鞋服、体育器材', '一般合作商', '羽球系列'),
+  //     new SupplierInfo('WILSON01', 'WILSON',
+  //       '体育器材', '', '羽球系列')
+  //   ];
+  //   setSupplierInfosResult(result);
+  //   return result;
+  // };
+
+  // 获取确定编号的供应商
+  const getSupplierInfo = (supplierNumber: string) => {
+    const api_getSupplier = getSupplierByNumber(supplierNumber);
+    api_getSupplier.then(response => {
+      let info = response.data;
+      setSupplierInfosResult([{
+        supplierNumber: info.supplierNumber,
+        supplierName: info.supplierName,
+        productionCategory: info.productionCategory,
+        remarks: info.remarks,
+        purchasingCategories: info.puchasingCategories
+      }]);
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    });
   };
 
   // 展示搜索结果
   const searchResult = (query: string) => {
-    const result = searchSupplier(query);
-    return result.map((item, index) => {
-      return {
-        value: item.number,
-        label: (
-          <Row>
-            <Col xs={24} sm={10}>
-              {item.number}
-            </Col>
-            <Col xs={24} sm={14}>
-              {item.name}
-            </Col>
-            <Col xs={24} sm={10}>
-              {item.productionCategory}
-            </Col>
-            <Col xs={24} sm={14}>
-              {item.remarks}
-            </Col>
-          </Row>
-        )
-      }
+    // const suppliers = searchSupplier(query);
+    // 调用接口搜索
+    const api_getSuppliers = getSuppliers({supplierNumber: query, num: 10});
+    api_getSuppliers.then(response => {
+      let suppliers = response.data.suppliersList;
+      setSupplierInfosResult(suppliers.map((item: any) => {
+        return {
+          supplierNumber: item.supplierNumber,
+          supplierName: item.supplierName,
+          productionCategory: item.productionCategory,
+          remarks: item.remarks,
+          purchasingCategories: item.purchasingCategories
+        };
+      }));
+      const results = suppliers.map((item: any, index:number) => {
+        return {
+          value: item.supplierNumber,
+          label: (
+            <Row>
+              <Col xs={24} sm={10}>
+                {item.supplierNumber}
+              </Col>
+              <Col xs={24} sm={14}>
+                {item.supplierName}
+              </Col>
+              <Col xs={24} sm={10}>
+                {item.productionCategory}
+              </Col>
+              <Col xs={24} sm={14}>
+                {item.remarks}
+              </Col>
+            </Row>
+          )
+        }
+      });
+      setOptions(results);
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
     });
   };
 
   // 处理搜索输入
   const handleSearch = (value: string) => {
     if(value){
-      let results = searchResult(value);
-      setOptions(results);
+      searchResult(value);
     }
     setValidateStatus('error');
   };
@@ -122,7 +157,7 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
       // 找到对应的GoodsInfo
       let info = supplierInfosResult[0];
       for (let i = 0; i < supplierInfosResult.length; i++) {
-        if(supplierInfosResult[i].number === selectedSupplierNumber){
+        if(supplierInfosResult[i].supplierNumber === selectedSupplierNumber){
           info = supplierInfosResult[i];
         }
       }
@@ -132,13 +167,13 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
           <Col span={24}>
             <Row gutter={18}>
               <Col span={8}><b>供应商编号:</b> </Col>
-              <Col>{info.number}</Col>
+              <Col>{info.supplierNumber}</Col>
             </Row>
           </Col>
           <Col span={24}>
             <Row gutter={18}>
               <Col span={8}><b>供应商名称:</b> </Col>
-              <Col>{info.name}</Col>
+              <Col>{info.supplierName}</Col>
             </Row>
           </Col>
           <Col span={24}>
@@ -150,7 +185,7 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
           <Col span={24}>
             <Row gutter={18}>
               <Col span={8}><b>采购类别:</b> </Col>
-              <Col>{info.purchasingCategory}</Col>
+              <Col>{info.purchasingCategories}</Col>
             </Row>
           </Col>
           <Col span={24}>
