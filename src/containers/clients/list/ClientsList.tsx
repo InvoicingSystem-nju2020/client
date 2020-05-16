@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
 
-import { Form, Row, Col, PageHeader, Input, Button } from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, notification} from 'antd';
 import { Table } from 'antd';
 import { EditOutlined, AccountBookOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
+import {getSuppliers, GetSuppliersParams} from "../../../api/SupplierApi";
+import {GetClientParams, getClients} from "../../../api/ClientApi";
 
 // 表格列
 const { Column } = Table;
@@ -58,7 +60,7 @@ const conditions = [
     <Input />
   </Form.Item>,
   <Form.Item
-    name='clientsContact'
+    name='contact'
     label='联系人'
   >
     <Input />
@@ -81,17 +83,31 @@ const conditions = [
 function ClientsList() {
   let [data, setData] = useState<ClientInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
-  let types: string[] = ['团购', '批发'];   // 所有商品种类
+  let types: string[] = ['团购', '批发'];   // 所有客户类型
+
+  const [params, setParams] = useState<GetClientParams>({});  // 搜索筛选参数
 
   let pageSize: number = 20;
 
   // 获取商品列表
   function getClientsList() {
-    let temp:ClientInfo[] = [
-      new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
-    ];
-    setData(temp);
-    setLoading(false);
+    let api = getClients(params);
+    setLoading(true);
+    api.then(response => {
+      console.log(response);
+      let list = response.data.clientsList;
+      setData(list);
+    }).catch(reason => {
+      console.error(reason);
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      setLoading(false);
+    });
+    // let temp:ClientInfo[] = [
+    //   new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
+    // ];
+    // setData(temp);
+    // setLoading(false);
   }
   // 加载时获取一次商品列表
   useEffect(() => {
@@ -100,8 +116,45 @@ function ClientsList() {
 
   // 处理表格变化
   function handleTableChange (pagination:any, filters:any, sorter:any) {
-
+    console.log(filters);
+    console.log(sorter);
+    // 客户类型筛选
+    if(filters.clientsType){
+      if(filters.clientsType.length >= 1){
+        params.clientsType = filters.clientsType;
+      }else{  // 全部
+        params.clientsType = undefined;
+      }
+    }
+    // 性别筛选, 字段与接口不太吻合，调整
+    if(filters.clientsSex){
+      if(filters.clientsSex.length === 1){
+        params.sex = filters.clientsSex[0] === '男' ? 1 : 2;
+      }else{  // 男和女，即全部
+        params.sex = 0;
+      }
+    }
+    // 排序
+    params.sorter = sorter.field;
+    params.desc = sorter.order === 'descend' ? 1 : 0;
+    console.log(params);
+    // 获取列表
+    getClientsList();
   }
+
+  // 处理搜索栏
+  function onSearchFormFinish(name: string, info: any) {
+    console.log(info);
+    // 组装数据
+    // 类型转为数组，符合接口
+    if(info.values.clientsType){
+      info.values.clientsType = [info.values.clientsType];
+    }
+    Object.assign(params, info.values);
+    console.log("params", params);
+    // 获取列表
+    getClientsList();
+  };
 
   return(
     <div>
@@ -118,7 +171,9 @@ function ClientsList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions}/>
+          <Form.Provider onFormFinish={onSearchFormFinish}>
+            <AdvancedSearchForm conditions={conditions}/>
+          </Form.Provider>
         </div>
         <Table dataSource={data} rowKey={'clientsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
