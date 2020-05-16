@@ -1,11 +1,24 @@
 import React, {useEffect, useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, Space, Popconfirm} from "antd";
+import {
+  Button,
+  InputNumber,
+  Input,
+  AutoComplete,
+  PageHeader,
+  Select,
+  Space,
+  Popconfirm,
+  message,
+  notification
+} from "antd";
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { FormItemLayout, FormInputSize, Regex } from "../../../util/ComponentsUtil";
 import {GoodsInfo} from "../../../api/data";
+import {BaseParam} from "../../../util/config";
+import {addGoods, deleteGoods, editGoods, getGoodsByNumber} from "../../../api/GoodsApi";
 
 
 const { Option } = Select;
@@ -23,6 +36,22 @@ function GoodsAddAndEdit(props: any) {
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
+        // 调用接口
+        let goods = (values as any);
+        let api = isEdit ? editGoods(goodsNumber, goods) : addGoods(goods);
+        const hide = message.loading('正在处理...', 0);  // 显示正在处理
+        api.then((response) => {
+          console.log(response);
+          const data = response.data;
+          hide(); // 隐藏正在处理
+          notification['success']({message: '操作成功', description: '商品编号: '+data});  // 显示成功
+          // 操作成功后跳转到列表
+          setTimeout(props.history.push(BaseParam.BASE_URL+'goods/list'), 1000);
+        }).catch(reason => {
+          console.error(reason);
+          hide();
+          notification['error']({message: '发生了错误', description: reason.toString()});
+        });
       });
   };
 
@@ -32,17 +61,29 @@ function GoodsAddAndEdit(props: any) {
       return;
     }
     // 获取原本的信息
-    let info = getSupplierInfo(goodsNumber);
-    setGoodsInfoToEdit(info);
-    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    // 获取原本的信息
+    const hideMessage = message.loading('正在加载商品信息...', 0);
+    let api_getGoodsByNumber = getGoodsByNumber(goodsNumber);
+    api_getGoodsByNumber.then(response => {
+      let info = response.data;
+      setGoodsInfoToEdit(info);
+      form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideMessage();
+    });
+    // let info = getSupplierInfo(goodsNumber);
+    // setGoodsInfoToEdit(info);
+    // form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
   }, [])
 
-  // 获取要被修改的信息
-  function getSupplierInfo(supplierNumber: string) {
-    let result: GoodsInfo;
-    result = {goodsNumber: 'xxxxxxx01', goodsName: '室内器材', abbreviation:'网球拍', brand: 'wilson', model: 'pro staff', goodsNo: 'WRT74181U2', material: '碳纤维', colour: '黑', type: '球拍', specifications: '97(in)2/16*19', unit: '支', weight: '315G', weightNum: 315, weightUnit: 'g', retailPrice:2480, placeOfProduction: '中国', qualityGuaranteePeriod: 6, remarks: 'xxx'};
-    return result;
-  }
+  // // 获取要被修改的信息
+  // function getSupplierInfo(supplierNumber: string) {
+  //   let result: GoodsInfo;
+  //   result = {goodsNumber: 'xxxxxxx01', goodsName: '室内器材', abbreviation:'网球拍', brand: 'wilson', model: 'pro staff', goodsNo: 'WRT74181U2', material: '碳纤维', colour: '黑', type: '球拍', specifications: '97(in)2/16*19', unit: '支', weight: '315G', weightNum: 315, weightUnit: 'g', retailPrice:2480, placeOfProduction: '中国', qualityGuaranteePeriod: 6, remarks: 'xxx'};
+  //   return result;
+  // }
 
   // 重置表单
   function resetForm() {
@@ -56,7 +97,17 @@ function GoodsAddAndEdit(props: any) {
 
   // 删除
   function confirmDelete() {
-
+    const hide = message.loading('正在处理...', 0);  // 显示正在处理
+    deleteGoods(goodsNumber).then(response => {
+      notification['success']({message: '删除商品成功', description: '编号: '+response.data});  // 显示成功
+      // 删除成功后跳转到列表
+      setTimeout(props.history.push(BaseParam.BASE_URL+'goods/list'), 1000);
+    }).catch(reason => {
+      console.error(reason);
+      notification['error']({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hide(); // 隐藏正在处理
+    });
   }
 
   return (
