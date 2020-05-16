@@ -1,11 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
-import {Form, Row, Col, PageHeader, Input, Button, InputNumber} from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, InputNumber, notification} from 'antd';
 import { Table } from 'antd';
 import { EditOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
+import {getSuppliers, GetSuppliersParams} from "../../../api/SupplierApi";
+import {getGoods, GetGoodsParams} from "../../../api/GoodsApi";
+import {DateFormat} from "../../../util/ComponentsUtil";
 
 // 表格列
 const { Column } = Table;
@@ -56,13 +59,13 @@ class GoodsInfo {
 // 搜索条件
 const conditions = [
   <Form.Item
-    name='clientsNumber'
+    name='goodsNumber'
     label='商品编号'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='clientsName'
+    name='goodsName'
     label='名称'
   >
     <Input />
@@ -119,8 +122,12 @@ const conditions = [
     label='售价'
   >
     <Input.Group compact>
-      <InputNumber name={'minRetailPrice'} placeholder={'最低价格'} style={{width:'50%'}}/>
-      <InputNumber name={'maxRetailPrice'} placeholder={'最高价格'} style={{width:'50%'}}/>
+      <Form.Item name={'minRetailPrice'} noStyle>
+        <InputNumber placeholder={'最低价格'} style={{width:'50%'}}/>
+      </Form.Item>
+      <Form.Item name={'maxRetailPrice'} noStyle>
+        <InputNumber placeholder={'最高价格'} style={{width:'50%'}}/>
+      </Form.Item>
     </Input.Group>
   </Form.Item>
 ];
@@ -133,15 +140,29 @@ function GoodsList() {
   let types: string[] = ['球拍', '球类'];   // 所有商品种类
   let placesOfProduction: string[] = ['中国', '日本'];   // 所有商品种类
 
+  const [params, setParams] = useState<GetGoodsParams>({});  // 搜索筛选参数
+
   let pageSize: number = 20;
 
   // 获取商品列表
   function getGoodsList() {
-    let temp:GoodsInfo[] = [
-      new GoodsInfo('xxxxxxxx', '室内器材', '网球拍', 'wilson', '球拍', 'pro staff', 'WRT74181U2', '碳纤维', '黑', '97(in)2/16*19', '支', '315G', 100, 1560, 2480, '中国', 6, '')
-    ];
-    setData(temp);
-    setLoading(false);
+    // let temp:GoodsInfo[] = [
+    //   new GoodsInfo('xxxxxxxx', '室内器材', '网球拍', 'wilson', '球拍', 'pro staff', 'WRT74181U2', '碳纤维', '黑', '97(in)2/16*19', '支', '315G', 100, 1560, 2480, '中国', 6, '')
+    // ];
+    // setData(temp);
+    // setLoading(false);
+    let api = getGoods(params);
+    setLoading(true);
+    api.then(response => {
+      console.log(response);
+      let list = response.data.goodsList;
+      setData(list);
+    }).catch(reason => {
+      console.error(reason);
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      setLoading(false);
+    });
   }
   // 加载时获取一次商品列表
   useEffect(() => {
@@ -150,7 +171,60 @@ function GoodsList() {
 
   // 处理表格变化
   function handleTableChange (pagination:any, filters:any, sorter:any) {
+    console.log(filters);
+    console.log(sorter);
+    // 品牌筛选
+    if(filters.brand){
+      if(filters.brand.length >= 1){
+        params.brand = filters.brand;
+      }else{  // 全部
+        params.brand = undefined;
+      }
+    }
+    // 种类筛选
+    if(filters.type){
+      if(filters.type.length >= 1){
+        params.type = filters.type;
+      }else{  // 全部
+        params.type = undefined;
+      }
+    }
+    // 产地筛选
+    if(filters.placeOfProduction){
+      if(filters.placeOfProduction.length >= 1){
+        params.place = filters.placeOfProduction;
+      }else{  // 全部
+        params.place = undefined;
+      }
+    }
+    // 排序
+    params.sorter = sorter.field;
+    params.desc = sorter.order === 'descend' ? 1 : 0;
+    console.log(params);
+    // 获取列表
+    getGoodsList();
+  }
 
+  // 处理搜索栏
+  function onSearchFormFinish(name: string, info: any) {
+    console.log(info);
+    // 组装数据
+    // 改成数组形式符合接口
+    if(info.values.brand){
+      info.values.brand = [info.values.brand];
+    }
+    if(info.values.type){
+      info.values.type = [info.values.type];
+    }
+    if(info.values.placeOfProduction){
+      info.values.place = [info.values.placeOfProduction];
+      info.values.placeOfProduction = undefined;  // 接口中使用place而不是placeOfProduction
+    }
+
+    Object.assign(params, info.values);
+    console.log("params", params);
+    // 获取列表
+    getGoodsList();
   }
 
   return(
@@ -168,7 +242,9 @@ function GoodsList() {
       </PageHeader>
       <div className={"ContentContainer"}>
         <div>
-          <AdvancedSearchForm conditions={conditions}/>
+          <Form.Provider onFormFinish={onSearchFormFinish}>
+            <AdvancedSearchForm conditions={conditions}/>
+          </Form.Provider>
         </div>
         <Table dataSource={data} rowKey={'goodsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
                onChange={handleTableChange}
