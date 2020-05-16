@@ -1,45 +1,87 @@
 import React, {useEffect, useState} from "react";
 
-import {Button, InputNumber, Input, AutoComplete, PageHeader, Select, Space, Popconfirm} from "antd";
+import {
+  Button,
+  InputNumber,
+  Input,
+  AutoComplete,
+  PageHeader,
+  Select,
+  Space,
+  Popconfirm,
+  message,
+  notification
+} from "antd";
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
 import { FormItemLayout, FormInputSize, Regex } from "../../../util/ComponentsUtil";
 import {ClientInfo} from "../../../api/data";
+import {BaseParam} from "../../../util/config";
+import {addClient, deleteClient, editClient, getClientByNumber} from "../../../api/ClientApi";
 
 const { Option } = Select;
 
 function ClientsAddAndEdit(props: any) {
   const [form] = Form.useForm();
   const [clientInfoToEdit, setClientInfoToEdit] = useState<ClientInfo>();
+  let types: string[] = ['团购', '批发'];   // 所有客户类型
   // 修改模式
-  const clinetsNumber: string = props.match.params.clientsNumber;
-  const isEdit: boolean = !!clinetsNumber;
+  const clientsNumber: string = props.match.params.clientsNumber;
+  const isEdit: boolean = !!clientsNumber;
 
   const onFinish = (v:any) => {
     form.validateFields()
       .then(values => {
         console.log('Received values of form: ', values);
+        // 调用接口
+        let client = (values as any);
+        let api = isEdit ? editClient(clientsNumber, client) : addClient(client);
+        const hide = message.loading('正在处理...', 0);  // 显示正在处理
+        api.then((response) => {
+          console.log(response);
+          const data = response.data;
+          hide(); // 隐藏正在处理
+          notification['success']({message: '操作成功', description: '客户编号: '+data});  // 显示成功
+          // 操作成功后跳转到列表
+          setTimeout(props.history.push(BaseParam.BASE_URL+'clients/list'), 1000);
+        }).catch(reason => {
+          console.error(reason);
+          hide();
+          notification['error']({message: '发生了错误', description: reason.toString()});
+        });
       });
   };
 
   // 组件首次加载时，若为修改模式则获取原本的信息
   useEffect(() => {
-    if(!isEdit || !clinetsNumber){
+    if(!isEdit || !clientsNumber){
       return;
     }
     // 获取原本的信息
-    let info = getClientInfo(clinetsNumber);
-    setClientInfoToEdit(info);
-    form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    const hideMessage = message.loading('正在加载客户信息...', 0);
+    let api_getClientByNumber = getClientByNumber(clientsNumber);
+    api_getClientByNumber.then(response => {
+      let info = response.data;
+      setClientInfoToEdit(info);
+      form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideMessage();
+    });
+    // // 获取原本的信息
+    // let info = getClientInfo(clientsNumber);
+    // setClientInfoToEdit(info);
+    // form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
   }, [])
 
-  // 获取要被修改的信息
-  function getClientInfo(clinetsNumber: string) {
-    let result: ClientInfo;
-    result = {clientsNumber: 'TFS2010-001', clientsName: '江苏省网球协会', clientsType: '团购', clientsContact: '胡', clientsSex: '男', clientsPost: '网协主席', contactInformation:'18000000000', remarks: '一般合作商', mail: 'xxx@a.com', other: '已退休'};
-    return result;
-  }
+  // // 获取要被修改的信息
+  // function getClientInfo(clinetsNumber: string) {
+  //   let result: ClientInfo;
+  //   result = {clientsNumber: 'TFS2010-001', clientsName: '江苏省网球协会', clientsType: '团购', clientsContact: '胡', clientsSex: '男', clientsPost: '网协主席', contactInformation:'18000000000', remarks: '一般合作商', mail: 'xxx@a.com', other: '已退休'};
+  //   return result;
+  // }
 
   // 重置表单
   function resetForm() {
@@ -53,7 +95,17 @@ function ClientsAddAndEdit(props: any) {
 
   // 删除
   function confirmDelete() {
-
+    const hide = message.loading('正在处理...', 0);  // 显示正在处理
+    deleteClient(clientsNumber).then(response => {
+      notification['success']({message: '删除客户成功', description: '编号: '+response.data});  // 显示成功
+      // 删除成功后跳转到列表
+      setTimeout(props.history.push(BaseParam.BASE_URL+'clients/list'), 1000);
+    }).catch(reason => {
+      console.error(reason);
+      notification['error']({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hide(); // 隐藏正在处理
+    });
   }
 
   return (
@@ -66,7 +118,7 @@ function ClientsAddAndEdit(props: any) {
         size={FormInputSize}
       >
         <PageHeader
-          title={isEdit ? <Space size={"large"}>修改客户<small>编号: {clinetsNumber}</small></Space> : "录入客户"}
+          title={isEdit ? <Space size={"large"}>修改客户<small>编号: {clientsNumber}</small></Space> : "录入客户"}
           ghost={false}
           onBack={() => window.history.back()}
           extra={[
@@ -124,7 +176,6 @@ function ClientsAddAndEdit(props: any) {
           <Form.Item
             label={"类型"}
             name={"clientsType"}
-            hasFeedback
             rules={[
               {
                 required: true,
@@ -132,7 +183,13 @@ function ClientsAddAndEdit(props: any) {
               }
             ]}
           >
-            <Input />
+            <Select>
+              {
+                types.map((value => {
+                  return <Select.Option value={value}>{value}</Select.Option>
+                }))
+              }
+            </Select>
           </Form.Item>
           <Form.Item
             label={"联系人"}
