@@ -42,7 +42,7 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
           console.log(response);
           const data = response.data;
           hide(); // 隐藏正在处理
-          notification['success']({message: '操作成功', description: '客户编号: '+data});  // 显示成功
+          notification['success']({message: '操作成功', description: '供应商编号: '+data});  // 显示成功
           // 操作成功后跳转到列表
           setTimeout(props.history.push(BaseParam.BASE_URL+'suppliers/list'), 1000);
         }).catch(reason => {
