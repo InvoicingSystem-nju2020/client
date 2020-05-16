@@ -13,8 +13,8 @@ const { Column } = Table;
 
 // 商品信息
 class SupplierInfo {
-  suppliersNumber: string
-  suppliersName: string
+  supplierNumber: string
+  supplierName: string
   contactInformation: string
   remarks: string
   productionCategory: string
@@ -25,9 +25,9 @@ class SupplierInfo {
   post:string
   mail: string
 
-  constructor(suppliersNumber: string, suppliersName: string, contactInformation: string, remarks: string, productionCategory: string, purchasingCategories: string, legalPerson: string, contact: string, sex: string, post: string, mail: string) {
-    this.suppliersNumber = suppliersNumber;
-    this.suppliersName = suppliersName;
+  constructor(supplierNumber: string, supplierName: string, contactInformation: string, remarks: string, productionCategory: string, purchasingCategories: string, legalPerson: string, contact: string, sex: string, post: string, mail: string) {
+    this.supplierNumber = supplierNumber;
+    this.supplierName = supplierName;
     this.contactInformation = contactInformation;
     this.remarks = remarks;
     this.productionCategory = productionCategory;
@@ -43,13 +43,13 @@ class SupplierInfo {
 // 搜索条件
 const conditions = [
   <Form.Item
-    name='suppliersNumber'
+    name='supplierNumber'
     label='编号'
   >
     <Input />
   </Form.Item>,
   <Form.Item
-    name='suppliersName'
+    name='supplierName'
     label='名称'
   >
     <Input />
@@ -186,7 +186,7 @@ function SuppliersList() {
           <Column title={"邮箱"} dataIndex={"mail"}/>
           <Column title={"备注"} dataIndex={"remarks"}/>
           <Column title={""} fixed={'right'} align={'center'}
-                  render={ (info) => <Link to={'/suppliers/edit/'+info.suppliersNumber}><EditOutlined /></Link> }
+                  render={ (info) => <Link to={'/suppliers/edit/'+info.supplierNumber}><EditOutlined /></Link> }
           />
         </Table>
       </div>
