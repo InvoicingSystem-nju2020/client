@@ -186,7 +186,7 @@ function ClientsAddAndEdit(props: any) {
             <Select>
               {
                 types.map((value => {
-                  return <Select.Option value={value}>{value}</Select.Option>
+                  return <Select.Option key={value} value={value}>{value}</Select.Option>
                 }))
               }
             </Select>

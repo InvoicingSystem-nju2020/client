@@ -6,7 +6,6 @@ import { EditOutlined, AccountBookOutlined, PlusOutlined } from '@ant-design/ico
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
-import {getSuppliers, GetSuppliersParams} from "../../../api/SupplierApi";
 import {GetClientParams, getClients} from "../../../api/ClientApi";
 
 // 表格列
