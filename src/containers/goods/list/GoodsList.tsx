@@ -131,12 +131,14 @@ const conditions = [
 ];
 
 
-function GoodsList() {
+function GoodsList(props: any) {
   let [data, setData] = useState<GoodsInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
-  let brands: string[] = ['李宁', 'victor'];   // 所有品牌
-  let types: string[] = ['球拍', '球类'];   // 所有商品种类
-  let placesOfProduction: string[] = ['中国', '日本'];   // 所有商品种类
+  // 获取辅助数据数组
+  const assistData = props.assistData;
+  let brands: string[] = assistData.brands; // 所有品牌
+  let types: string[] = assistData.goodsTypes;   // 所有商品种类
+  let placesOfProduction: string[] = assistData.places;   // 所有商品种类
 
   const [params, setParams] = useState<GetGoodsParams>({});  // 搜索筛选参数
 

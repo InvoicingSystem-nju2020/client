@@ -22,12 +22,6 @@ import GoodsSearchAndShowByNumber from "../../../components/goods-search-and-sho
 import ClientSearch from "../../../components/client-search/ClientsSearch";
 import {SelectProps} from "antd/es/select";
 import {OrderInfo, SupplierInfo} from "../../../api/data";
-import {
-  addPurchaseRecords,
-  deletePurchaseRecord,
-  editPurchaseRecord,
-  getPurchaseRecordById
-} from "../../../api/PurchaseRecordApi";
 import {BaseParam} from "../../../util/config";
 import {addOrder, deleteOrder, editOrder, getOrderByNumber} from "../../../api/OrderApi";
 

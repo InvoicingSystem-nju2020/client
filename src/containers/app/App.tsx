@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   BrowserRouter,
@@ -28,12 +28,37 @@ import PurchaseRecordsAddAndEdit from "../purchase-records/add-and-edit/Purchase
 import OrdersAddAndEdit from "../orders/add-and-edit/OrdersAddAndEdit";
 import OrdersList from "../orders/list/OrdersList";
 
+// 数据
+import {getAssistData} from "../../api/AssistApi";
+import {AssistData} from "../../api/data";
 
 const { Content, Sider } = Layout;
 
 
 const App: React.FC = () => {
   const supportsHistory = 'pushState' in window.history;
+
+  // 获取辅助接口
+  const [assistData, setAssistData] = useState<AssistData>({
+    goodsTypes: ['球拍', '球类'],
+    brands: ['LINING', 'WILSON'],
+    places: ['中国', '日本'],
+    clientTypes: ["零售", "团购", "批发"],
+    orderStates: ["待付款", "赊账中", "已到账", "已售", "已取消", "已完成"],
+    typesOfPayment: ['现金', '预支付', '赊账'],
+    typesOfShipping: ['自提', '邮寄']
+  });
+  // 网站首次加载时，获取一次。缺点：如果首次直接进入列表、编辑等页面时，会导致调用2次后端接口(在setAssistData后组件重绘会再调用一次)
+  useEffect(() => {
+    // 全局, 方便各页面使用（X）会污染全局window变量, 暂行的解决办法
+    const api_assist = getAssistData();
+    api_assist.then(response => {
+      const assistData: AssistData = response.data;
+      setAssistData(assistData);
+    }).catch(reason => {
+    });
+  }, []);
+
   return (
     <BrowserRouter forceRefresh={!supportsHistory}>
       <div className="App">
@@ -52,7 +77,7 @@ const App: React.FC = () => {
               <RouterSwitch>
                 <Route path="/orders">
                   <RouterSwitch>
-                    <Route path="/orders/list" component={OrdersList}/>
+                    <Route path="/orders/list" component={() => <OrdersList assistData={assistData}/>}/>
                     <Route path="/orders/add" component={OrdersAddAndEdit}/>
                     <Route path="/orders/edit/:orderNumber" component={OrdersAddAndEdit}/>
                     <Redirect to="/orders/list"/>
@@ -60,7 +85,7 @@ const App: React.FC = () => {
                 </Route>
                 <Route path="/purchase-records">
                   <RouterSwitch>
-                    <Route path="/purchase-records/list" component={PurchaseRecordsList}/>
+                    <Route path="/purchase-records/list" component={() => <PurchaseRecordsList assistData={assistData}/>}/>
                     <Route path="/purchase-records/add" component={PurchaseRecordsAddAndEdit}/>
                     <Route path="/purchase-records/edit/:id" component={PurchaseRecordsAddAndEdit}/>
                     <Redirect to="/purchase-records/list"/>
@@ -68,7 +93,7 @@ const App: React.FC = () => {
                 </Route>
                 <Route path="/goods">
                   <RouterSwitch>
-                    <Route path="/goods/list" component={GoodsList}/>
+                    <Route path="/goods/list" component={() => <GoodsList assistData={assistData}/>}/>
                     <Route path="/goods/add" component={GoodsAddAndEdit}/>
                     <Route path="/goods/edit/:goodsNumber" component={GoodsAddAndEdit}/>
                     <Redirect to="/goods/list"/>

@@ -179,10 +179,12 @@ const conditions = [
 ];
 
 
-function PurchaseRecordsList() {
+function PurchaseRecordsList(props: any) {
   let [data, setData] = useState<PurchaseRecordInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
-  let types: string[] = ['团购', '批发'];   // 所有商品种类
+  // 获取辅助数据数组
+  const assistData = props.assistData;
+  let brands: string[] = assistData.brands; // 所有品牌
   // 获取list的筛选参数
   const [params, setParams] = useState<GetPurchaseRecordsParams>({});
 
@@ -339,7 +341,9 @@ function PurchaseRecordsList() {
         >
           <Column title={"进货时间"} dataIndex={"purchaseTime"} sorter={true}/>
           <Column title={"商品编号"} dataIndex={"goodsNumber"} sorter={true}/>
-          <Column title={"品牌"} dataIndex={"brand"} sorter={true}/>
+          <Column title={"品牌"} dataIndex={"brand"} sorter={true}
+                  filters={ brands.map(value => {return({text: value, value: value})} ) }
+          />
           <Column title={"品名"} dataIndex={"abbreviation"} sorter={true}/>
           <Column title={"数量"} dataIndex={"numbers"} sorter={true}/>
           <Column title={"零售价"} dataIndex={"retailPrice"} sorter={true}/>

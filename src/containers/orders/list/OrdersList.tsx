@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Link} from "react-router-dom";
 
 import {
@@ -25,6 +25,7 @@ import {AdvancedSearchForm} from "../../../components/advanced-search-form/Advan
 import { DateFormat } from "../../../util/ComponentsUtil";
 import {getOrders, GetOrdersParams, updateOrderState} from "../../../api/OrderApi";
 import {BaseParam} from "../../../util/config";
+import {AssistData} from "../../../api/data";
 
 // 表格列
 const { Column } = Table;
@@ -143,7 +144,10 @@ const conditions = [
 function OrdersList(props: any) {
   let [data, setData] = useState<OrderInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
-  let orderStates: string[] = ['已售', '赊账中', '已到账']; // 订单的状态
+  // 获取辅助数据数组
+  const assistData = props.assistData;
+  let orderStates: string[] = assistData.orderStates; // 订单的状态
+  let brands: string[] = assistData.brands; // 所有品牌
   // 获取list的筛选参数
   const [params, setParams] = useState<GetOrdersParams>({});
   // 获取选择的行
@@ -349,7 +353,9 @@ function OrdersList(props: any) {
           <Column title={"客户"} dataIndex={"clientName"} sorter={true}/>
           <Column title={"销售员"} dataIndex={"salesPerson"} sorter={true}/>
           <Column title={"商品编号"} dataIndex={"goodsNumber"} sorter={true}/>
-          <Column title={"品牌"} dataIndex={"brand"} sorter={true}/>
+          <Column title={"品牌"} dataIndex={"brand"} sorter={true}
+                  filters={ brands.map(value => {return({text: value, value: value})} ) }
+          />
           <Column title={"商品名称"} dataIndex={"goodsName"} sorter={true}/>
           {/*<Column title={"税"} dataIndex={"taxIncluded"} sorter={true}*/}
           {/*        filters={ [{text: '是', value: 1}, {text: '否', value: 0}] }*/}

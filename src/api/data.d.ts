@@ -99,4 +99,14 @@ interface OrderInfo {
   typeOfShipping: string;
 }
 
+export interface AssistData {
+  goodsTypes: string[];
+  brands: string[];
+  places: string[];
+  clientTypes: string[];
+  orderStates: string[];
+  typesOfPayment: string[];
+  typesOfShipping: string[];
+}
+
 export {GoodsAddFormData, SupplierInfo, ClientInfo, GoodsInfo, PurchaseRecordInfo, OrderInfo};
