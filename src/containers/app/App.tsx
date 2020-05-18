@@ -31,6 +31,7 @@ import OrdersList from "../orders/list/OrdersList";
 // 数据
 import {getAssistData} from "../../api/AssistApi";
 import {AssistData} from "../../api/data";
+import ClientBalanceRecordsList from "../clients/balance-records/ClientBalanceRecords";
 
 const { Content, Sider } = Layout;
 
@@ -104,6 +105,7 @@ const App: React.FC = () => {
                     <Route path="/clients/list" component={ClientsList}/>
                     <Route path="/clients/add" component={ClientsAddAndEdit}/>
                     <Route path="/clients/edit/:clientsNumber" component={ClientsAddAndEdit}/>
+                    <Route path="/clients/balance-records/:clientsNumber" component={ClientBalanceRecordsList}/>
                     <Redirect to="/clients/list"/>
                   </RouterSwitch>
                 </Route>

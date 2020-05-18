@@ -13,7 +13,20 @@ export interface GetClientParams {
   desc?: number;
   startIndex?: number;
   num?: number;
-}
+};
+
+export interface GetClientBalanceRecordsParams {
+  startMonth?: string;
+  endMonth?: string;
+  startRemittanceDate?: string;
+  endRemittanceDate?: string;
+  minRemittanceAmount?: number;
+  maxRemittanceAmount?: number;
+  minPurchaseAmount?: number;
+  maxPurchaseAmount?: number;
+  startIndex?: number;
+  num?: number;
+};
 
 const CLIENT_API_URL = '/api/clients';
 
@@ -56,4 +69,12 @@ function deleteClient(clientNumber: string) {
   );
 };
 
-export {addClient, getClients, getClientByNumber, editClient, deleteClient};
+// 获取客户的汇款信息
+function getClientBalanceRecords(clientNumber: string, params: GetClientBalanceRecordsParams) {
+  return Get(
+    CLIENT_API_URL+'/'+clientNumber+'/clientBalanceRecords',
+    params
+  )
+};
+
+export {addClient, getClients, getClientByNumber, editClient, deleteClient, getClientBalanceRecords};

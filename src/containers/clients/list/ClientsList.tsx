@@ -192,7 +192,7 @@ function ClientsList() {
           <Column title={"备注"} dataIndex={"remarks"}/>
           <Column title={"其他"} dataIndex={"other"}/>
           <Column title={"汇款信息"} fixed={'right'} align={'center'}
-                  render={ (info) => <Link to={'/clients/remittance/'+info.clientsNumber}><AccountBookOutlined /></Link> }
+                  render={ (info) => <Link to={'/clients/balance-records/'+info.clientsNumber}><AccountBookOutlined /></Link> }
           />
           <Column title={""} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/clients/edit/'+info.clientsNumber}><EditOutlined /></Link> }
