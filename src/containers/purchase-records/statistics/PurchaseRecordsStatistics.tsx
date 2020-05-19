@@ -15,13 +15,13 @@ import {
   Select,
   AutoComplete, Input, notification
 } from 'antd';
-import { ArrowUpOutlined, ArrowDownOutlined, MinusOutlined } from '@ant-design/icons';
 
 import 'moment/locale/zh-cn';
 import moment from 'moment';
 
 import {DateFormat, ChartConfig, FormInputSize} from "../../../util/ComponentsUtil";
 import {getBrandTimeRangeStatistics, getMonthStatistics, getTimeRangeStatistics} from "../../../api/PurchaseRecordApi";
+import IncreaseOrDecreaseLabel from "../../../components/increase-or-decrease-label/IncreaseOrDecreaseLabel";
 
 // 日期区间选择
 const { RangePicker } = DatePicker;
@@ -38,43 +38,6 @@ interface MonthInfo {
   amountIncrease: number;
   perBrandTotal: any[];
   perSupplierTotal: any[];
-}
-
-// 显示增长和减少的组件
-function increaseOrDecrease(num: number) {
-  // 格式化显示字符串
-  const numStr = Math.abs(num).toFixed(1);
-  // 增长
-  if(num > 0){
-    return (
-      <Tooltip title={"对比上一个月增长了"+numStr+"%"} placement="bottom">
-        <span style={{color: '#3f8600'}}>
-          <ArrowUpOutlined/>
-          {numStr}%
-        </span>
-      </Tooltip>
-    )
-  }
-  else if(num < 0) {  // 减少
-    return (
-      <Tooltip title={"对比上一个月减少了"+numStr+"%"} placement="bottom">
-        <span style={{ color: '#cf1322' }}>
-          <ArrowDownOutlined/>
-          {numStr}%
-        </span>
-      </Tooltip>
-    )
-  }
-  else {  // 0持平
-    return (
-      <Tooltip title={"与上个月持平"} placement="bottom">
-        <span style={{color: 'rgb(29,161,242)'}}>
-          <MinusOutlined/>
-          0%
-        </span>
-      </Tooltip>
-    )
-  }
 }
 
 
@@ -476,7 +439,7 @@ function PurchaseRecordsStatistics(props: any) {
               <Skeleton loading={monthIsLoading}>
                 <Statistic title="总进货记录数" value={monthInfo?.numTotal}
                            suffix={
-                             increaseOrDecrease((monthInfo?.numIncrease === undefined) ? 0 : monthInfo.numIncrease)
+                             IncreaseOrDecreaseLabel((monthInfo?.numIncrease === undefined) ? 0 : monthInfo.numIncrease)
                            }
                 />
               </Skeleton>
@@ -485,7 +448,7 @@ function PurchaseRecordsStatistics(props: any) {
               <Skeleton loading={monthIsLoading}>
                 <Statistic title="总进货金额" value={monthInfo?.amountTotal} precision={2}
                            suffix={
-                             increaseOrDecrease(
+                             IncreaseOrDecreaseLabel(
                                (monthInfo?.amountIncrease === undefined) ? 0 : monthInfo.amountIncrease
                              )
                            }
