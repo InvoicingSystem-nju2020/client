@@ -32,6 +32,7 @@ import OrdersList from "../orders/list/OrdersList";
 import {getAssistData} from "../../api/AssistApi";
 import {AssistData} from "../../api/data";
 import ClientBalanceRecordsList from "../clients/balance-records/ClientBalanceRecords";
+import PurchaseRecordsStatistics from "../purchase-records/statistics/PurchaseRecordsStatistics";
 
 const { Content, Sider } = Layout;
 
@@ -89,6 +90,7 @@ const App: React.FC = () => {
                     <Route path="/purchase-records/list" component={() => <PurchaseRecordsList assistData={assistData}/>}/>
                     <Route path="/purchase-records/add" component={PurchaseRecordsAddAndEdit}/>
                     <Route path="/purchase-records/edit/:id" component={PurchaseRecordsAddAndEdit}/>
+                    <Route path="/purchase-records/statistics" component={() => <PurchaseRecordsStatistics assistData={assistData}/>}/>
                     <Redirect to="/purchase-records/list"/>
                   </RouterSwitch>
                 </Route>

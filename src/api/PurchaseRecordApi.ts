@@ -1,31 +1,6 @@
 import { Get, Post, Put, Patch, Delete } from './Request'
 import {PurchaseRecordInfo} from "./data";
 
-// class GetPurchaseRecordsParams {
-//   startPurchaseTime: string = '';
-//   endPurchaseTime: string = '';
-//   startCreateTime:string = '';
-//   endCreateTime:string = '';
-//   goodsName:string = '';
-//   goodsNumber:string = '';
-//   brand:string = '';
-//   supplier:string = '';
-//   minNumbers:number = 0;
-//   maxNumbers:number = 0;
-//   minRetailPrice:number = 0;
-//   maxRetailPrice:number = 0;
-//   minDiscount:number = 0;
-//   maxDiscount:number = 0;
-//   minUnitPrice:number = 0;
-//   maxUnitPrice:number = 0;
-//   minTotalAmount:number = 0;
-//   maxTotalAmount:number = 0;
-//   taxIncluded:number = -1;
-//   sorter:string = '';
-//   desc:number = 0;
-//   startIndex:number = 0;
-//   num:number = 100;
-// }
 export interface GetPurchaseRecordsParams {
   startPurchaseTime?: string;
   endPurchaseTime?: string;
@@ -92,5 +67,30 @@ function deletePurchaseRecord(id: string) {
     PURCHASE_RECORDS_API_URL+'/'+id
   );
 };
+
+// 获取某一个月份的统计数据
+export function getMonthStatistics(params: {month?: string}) {
+  return Get(
+    PURCHASE_RECORDS_API_URL+'/statistics/month',
+    params
+  )
+};
+
+// 获取某个时间区间内的各月进货金额统计数据
+export function getTimeRangeStatistics(params: {startTime?: string, endTime?: string}) {
+  return Get(
+    PURCHASE_RECORDS_API_URL+'/statistics/time_range',
+    params
+  )
+};
+
+// 获取某个时间区间内的各月进货金额统计数据
+export function getBrandTimeRangeStatistics(params: {startTime?: string, endTime?: string, brand: string}) {
+  return Get(
+    PURCHASE_RECORDS_API_URL+'/statistics/brand_time_range',
+    params
+  )
+};
+
 
 export {addPurchaseRecords, getPurchaseRecords, getPurchaseRecordById, editPurchaseRecord, deletePurchaseRecord};

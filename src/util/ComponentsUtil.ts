@@ -31,4 +31,12 @@ const DateFormat = {
   monthFormat: 'YYYY/MM'
 }
 
+/**
+ * 图表里的字体大小
+ */
+export const ChartConfig = {
+  theme: 'light',
+  fontSize: 14
+}
+
 export {FormItemLayout, FormInputSize, Regex, DateFormat};
