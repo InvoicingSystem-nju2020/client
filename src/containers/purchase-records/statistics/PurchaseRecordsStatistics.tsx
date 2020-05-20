@@ -154,7 +154,6 @@ function PurchaseRecordsStatistics(props: any) {
         }
       }]
     };
-    ;
     if (option && typeof option === "object") {
       myChart.setOption(option, true);
     }
@@ -210,7 +209,6 @@ function PurchaseRecordsStatistics(props: any) {
         }
       }]
     };
-    ;
     if (option && typeof option === "object") {
       myChart.setOption(option, true);
     }
@@ -266,7 +264,6 @@ function PurchaseRecordsStatistics(props: any) {
         }
       }]
     };
-    ;
     if (option && typeof option === "object") {
       myChart.setOption(option, true);
     }
@@ -428,7 +425,7 @@ function PurchaseRecordsStatistics(props: any) {
       <div className={"ContentContainer"}>
         {/*这一月份的总体统计信息*/}
         <Card>
-          <Row gutter={16}>
+          <Row gutter={[16, 32]}>
             {/*统计信息*/}
             <Col sm={8} xs={24}>
               <Skeleton loading={monthIsLoading}>
@@ -472,7 +469,7 @@ function PurchaseRecordsStatistics(props: any) {
         </Card>
         {/*某一个时间区间内的*/}
         <Card>
-          <Row gutter={16}>
+          <Row gutter={[16, 32]}>
             <Col sm={12} xs={24}>
               <Spin spinning={timeRangeIsLoading}>
                 {/*某一时间区间内各月的总进货金额*/}
