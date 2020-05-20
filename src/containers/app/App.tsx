@@ -33,6 +33,7 @@ import {getAssistData} from "../../api/AssistApi";
 import {AssistData} from "../../api/data";
 import ClientBalanceRecordsList from "../clients/balance-records/ClientBalanceRecords";
 import PurchaseRecordsStatistics from "../purchase-records/statistics/PurchaseRecordsStatistics";
+import DailyStatistics from "../statistics/daily/DailyStatistics";
 
 const { Content, Sider } = Layout;
 
@@ -119,7 +120,14 @@ const App: React.FC = () => {
                     <Redirect to="/suppliers/list"/>
                   </RouterSwitch>
                 </Route>
-                <Route path="/statistics">statistics</Route>
+                <Route path="/statistics">
+                  <RouterSwitch>
+                    <Route path="/statistics/daily" component={DailyStatistics}/>
+                    {/*<Route path="/statistics/weekly" component={}/>*/}
+                    {/*<Route path="/statistics/monthly" component={}/>*/}
+                    <Redirect to="/suppliers/daily"/>
+                  </RouterSwitch>
+                </Route>
                 <Route path="/" exact>home</Route>
                 <Redirect to="/"/>
               </RouterSwitch>
