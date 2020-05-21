@@ -13,7 +13,7 @@ export interface GetClientParams {
   desc?: number;
   startIndex?: number;
   num?: number;
-};
+}
 
 export interface GetClientBalanceRecordsParams {
   startMonth?: string;
@@ -26,7 +26,7 @@ export interface GetClientBalanceRecordsParams {
   maxPurchaseAmount?: number;
   startIndex?: number;
   num?: number;
-};
+}
 
 const CLIENT_API_URL = '/api/clients';
 
@@ -36,7 +36,7 @@ function addClient(client: ClientInfo) {
     CLIENT_API_URL,
     client
   );
-};
+}
 
 // 查看客户列表
 function getClients(params: GetClientParams) {
@@ -47,34 +47,41 @@ function getClients(params: GetClientParams) {
 }
 
 // 查询单个客户
-function getClientByNumber(clientNumber: string) {
+function getClientByNumber(clientsNumber: string) {
   return Get(
-    CLIENT_API_URL,
-    {clientNumber: clientNumber}
+    CLIENT_API_URL+'/'+clientsNumber,
+    {}
   );
-};
+}
 
 // 修改客户
-function editClient(clientNumber: string, client: ClientInfo) {
+function editClient(clientsNumber: string, client: ClientInfo) {
   return Put(
-    CLIENT_API_URL+'/'+clientNumber,
+    CLIENT_API_URL+'/'+clientsNumber,
     client
   );
-};
+}
 
 // 删除客户
-function deleteClient(clientNumber: string) {
+function deleteClient(clientsNumber: string) {
   return Delete(
-    CLIENT_API_URL+'/'+clientNumber
+    CLIENT_API_URL+'/'+clientsNumber
   );
-};
+}
 
 // 获取客户的汇款信息
-function getClientBalanceRecords(clientNumber: string, params: GetClientBalanceRecordsParams) {
+function getClientBalanceRecords(clientsNumber: string, params: GetClientBalanceRecordsParams) {
   return Get(
-    CLIENT_API_URL+'/'+clientNumber+'/clientBalanceRecords',
+    CLIENT_API_URL+'/'+clientsNumber+'/clientBalanceRecords',
     params
   )
-};
+}
+
+export function clientPay(params: {clientsNumber: string, change: number}) {
+  return Patch(
+    CLIENT_API_URL+'/balance',
+    params
+  )
+}
 
 export {addClient, getClients, getClientByNumber, editClient, deleteClient, getClientBalanceRecords};
