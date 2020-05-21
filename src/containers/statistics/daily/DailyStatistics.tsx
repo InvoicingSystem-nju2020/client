@@ -20,7 +20,6 @@ import 'moment/locale/zh-cn';
 import moment from 'moment';
 
 import {DateFormat, ChartConfig, FormInputSize} from "../../../util/ComponentsUtil";
-import {getBrandTimeRangeStatistics, getMonthStatistics, getTimeRangeStatistics} from "../../../api/PurchaseRecordApi";
 import IncreaseOrDecreaseLabel from "../../../components/increase-or-decrease-label/IncreaseOrDecreaseLabel";
 import {getDailyStatistics} from "../../../api/StatisticsApi";
 
@@ -378,7 +377,7 @@ function DailyStatistics(props: any) {
     }
   };
 
-  // 获取并设置某一月份的数据和图表，首次加载和设置月份后触发
+  // 获取并设置某一天的日报，首次加载和设置日期后触发
   useEffect(() => {
     setIsLoading(true);
     // 某一天的日报
@@ -451,7 +450,7 @@ function DailyStatistics(props: any) {
       <PageHeader
         ghost={false}
         onBack={() => window.history.back()}
-        title="进货统计"
+        title="日报"
         extra={
           <Form key="1" initialValues={{month: moment()}} layout="inline" onFinish={onFinish}>
             <Form.Item label={"日期"} name="dateToShow">
@@ -528,7 +527,7 @@ function DailyStatistics(props: any) {
             </Col>
             <Col sm={24} xs={24}>
               <Spin spinning={isLoading}>
-                {/*该月份各个供应商的进货金额*/}
+                {/*该日各时段的订单统计*/}
                 <div id="perHourChart" style={{height: 350}}/>
               </Spin>
             </Col>
