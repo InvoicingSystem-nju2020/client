@@ -92,23 +92,23 @@ function ClientsList(props: any) {
 
   // 获取商品列表
   function getClientsList() {
-    // let api = getClients(params);
-    // setLoading(true);
-    // api.then(response => {
-    //   console.log(response);
-    //   let list = response.data.clientsList;
-    //   setData(list);
-    // }).catch(reason => {
-    //   console.error(reason);
-    //   notification.error({message: '发生了错误', description: reason.toString()});
-    // }).finally(() => {
-    //   setLoading(false);
-    // });
-    let temp:ClientInfo[] = [
-      new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
-    ];
-    setData(temp);
-    setLoading(false);
+    let api = getClients(params);
+    setLoading(true);
+    api.then(response => {
+      console.log(response);
+      let list = response.data.clientsList;
+      setData(list);
+    }).catch(reason => {
+      console.error(reason);
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      setLoading(false);
+    });
+    // let temp:ClientInfo[] = [
+    //   new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
+    // ];
+    // setData(temp);
+    // setLoading(false);
   }
   // 加载时获取一次商品列表
   useEffect(() => {
