@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from 'react';
 
-import {Form, Row, Col, PageHeader, Input, Button, notification} from 'antd';
+import {Form, Row, Col, PageHeader, Input, Button, notification, Popover, Select, InputNumber, message} from 'antd';
 import { Table } from 'antd';
 import { EditOutlined, AccountBookOutlined, PlusOutlined } from '@ant-design/icons';
 
 import {AdvancedSearchForm} from "../../../components/advanced-search-form/AdvancedSearchForm";
 import {Link} from "react-router-dom";
-import {GetClientParams, getClients} from "../../../api/ClientApi";
+import {clientPay, GetClientParams, getClients} from "../../../api/ClientApi";
+import {ExclamationCircleOutlined, PayCircleOutlined} from "@ant-design/icons/lib";
+import {BaseParam} from "../../../util/config";
 
 // 表格列
 const { Column } = Table;
@@ -79,7 +81,7 @@ const conditions = [
 ];
 
 
-function ClientsList() {
+function ClientsList(props: any) {
   let [data, setData] = useState<ClientInfo[]>([]) ;  // dataSource数组
   let [loading, setLoading] = useState(true);
   let types: string[] = ['团购', '批发'];   // 所有客户类型
@@ -90,23 +92,23 @@ function ClientsList() {
 
   // 获取商品列表
   function getClientsList() {
-    let api = getClients(params);
-    setLoading(true);
-    api.then(response => {
-      console.log(response);
-      let list = response.data.clientsList;
-      setData(list);
-    }).catch(reason => {
-      console.error(reason);
-      notification.error({message: '发生了错误', description: reason.toString()});
-    }).finally(() => {
-      setLoading(false);
-    });
-    // let temp:ClientInfo[] = [
-    //   new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
-    // ];
-    // setData(temp);
-    // setLoading(false);
+    // let api = getClients(params);
+    // setLoading(true);
+    // api.then(response => {
+    //   console.log(response);
+    //   let list = response.data.clientsList;
+    //   setData(list);
+    // }).catch(reason => {
+    //   console.error(reason);
+    //   notification.error({message: '发生了错误', description: reason.toString()});
+    // }).finally(() => {
+    //   setLoading(false);
+    // });
+    let temp:ClientInfo[] = [
+      new ClientInfo('TFS2010-001', '江苏省网球协会', '团购', '胡', '男', '网协主席', '18000000000', 'xxx@a.com', '已退休', '')
+    ];
+    setData(temp);
+    setLoading(false);
   }
   // 加载时获取一次商品列表
   useEffect(() => {
@@ -153,7 +155,29 @@ function ClientsList() {
     console.log("params", params);
     // 获取列表
     getClientsList();
-  };
+  }
+
+  // 处理充值表单提交
+  function onPayFormFinish(values: any) {
+    const hideLoading = message.loading('正在给客户充值...', 0);
+    const api_clientPay = clientPay({clientsNumber: values.clientsNumber, change: values.change});
+    api_clientPay.then(response => {
+      notification.success({
+        message: '充值成功',
+        description:
+          <span>
+            客户编号: {response.data.clientsNumber} <br></br>
+            余额: {response.data.balance}
+          </span>
+      });
+      // 操作成功刷新
+      setTimeout(props.history.push(BaseParam.BASE_URL+'clients/list'), 1000);
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
+    }).finally(() => {
+      hideLoading();
+    });
+  }
 
   return(
     <div>
@@ -191,6 +215,58 @@ function ClientsList() {
           <Column title={"邮箱"} dataIndex={"mail"}/>
           <Column title={"备注"} dataIndex={"remarks"}/>
           <Column title={"其他"} dataIndex={"other"}/>
+          <Column title={"充值"} align={'center'}
+                  render={ (info) =>
+                    <Popover placement="bottomRight"
+                             title={
+                               <span>
+                                 <ExclamationCircleOutlined style={{color:'rgb(250,173,20)'}} />
+                                 为该客户充值余额
+                               </span>
+                             }
+                             trigger="click"
+                             content={
+                               <Form size={'small'} onFinish={onPayFormFinish}>
+                                 <Form.Item
+                                   name={'clientsNumber'}
+                                   initialValue={info.clientsNumber}
+                                   noStyle
+                                   style={{display: 'none'}}
+                                 >
+                                   <Input hidden />
+                                 </Form.Item>
+                                 <Form.Item name={'change'} label={'充值额度'}
+                                            rules={[
+                                              {
+                                                required: true,
+                                                message: '请输入充值额度'
+                                              },
+                                              {
+                                                type: 'number',
+                                                min: 0,
+                                                message: '请输入正确的充值额度，>0'
+                                              }
+                                            ]}
+                                 >
+                                   <InputNumber
+                                     min={0}
+                                     style={{width: "100%"}}
+                                   />
+                                 </Form.Item>
+                                 <Form.Item noStyle>
+                                   <div style={{textAlign: 'right'}}>
+                                     <Button type="primary" htmlType="submit">
+                                       确认
+                                     </Button>
+                                   </div>
+                                 </Form.Item>
+                               </Form>
+                             }
+                    >
+                      <Button type="link"><PayCircleOutlined /></Button>
+                    </Popover>
+                  }
+          />
           <Column title={"汇款信息"} fixed={'right'} align={'center'}
                   render={ (info) => <Link to={'/clients/balance-records/'+info.clientsNumber}><AccountBookOutlined /></Link> }
           />
