@@ -22,7 +22,7 @@ interface GoodsAddFormData {
 
 // 供应商信息
 interface SupplierInfo {
-  supplierNumber: string;
+  supplierNumber?: string;
   supplierName: string;
   contactInformation: string;
   remarks: string;
@@ -51,7 +51,7 @@ interface ClientInfo {
 
 // 商品信息
 interface GoodsInfo {
-  goodsNumber: string;
+  goodsNumber?: string;
   goodsName: string;
   abbreviation: string;
   brand: string;
@@ -86,7 +86,7 @@ interface PurchaseRecordInfo {
 }
 
 interface OrderInfo {
-  orderNumber: string;
+  orderNumber?: string;
   state: string;
   salesPerson: string;
   clientNumber: string;

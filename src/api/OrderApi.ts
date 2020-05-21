@@ -40,8 +40,8 @@ export function getOrders(params: GetOrdersParams) {
 // 查询单个订单
 export function getOrderByNumber(orderNumber: string) {
   return Get(
-    ORDER_API_URL,
-    {orderNumber: orderNumber}
+    ORDER_API_URL+'/'+orderNumber,
+    {}
   );
 };
 

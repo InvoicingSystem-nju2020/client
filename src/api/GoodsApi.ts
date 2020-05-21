@@ -41,8 +41,8 @@ function getGoods(params: GetGoodsParams) {
 // 查询单个商品
 function getGoodsByNumber(goodsNumber: string) {
   return Get(
-    GOODS_API_URL,
-    {goodsNumber: goodsNumber}
+    GOODS_API_URL+'/'+goodsNumber,
+    {}
   );
 };
 

@@ -48,8 +48,8 @@ function getPurchaseRecords(params: GetPurchaseRecordsParams) {
 // 查询单个进货记录
 function getPurchaseRecordById(id: string) {
   return Get(
-    PURCHASE_RECORDS_API_URL,
-    {id: id}
+    PURCHASE_RECORDS_API_URL+'/'+id,
+    {}
   );
 };
 

@@ -37,8 +37,8 @@ function getSuppliers(params: GetSuppliersParams) {
 // 查询单个供应商
 function getSupplierByNumber(supplierNumber: string) {
   return Get(
-    SUPPLIER_API_URL,
-    {supplierNumber: supplierNumber}
+    SUPPLIER_API_URL+'/'+supplierNumber,
+    {}
   );
 };
 
