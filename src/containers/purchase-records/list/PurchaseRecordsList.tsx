@@ -188,7 +188,9 @@ function PurchaseRecordsList(props: any) {
   // 获取list的筛选参数
   const [params, setParams] = useState<GetPurchaseRecordsParams>({});
 
-  let pageSize: number = 20;
+  // 分页
+  // const [pageSize, setPageSize] = useState<number>(20);
+  const [total, setTotal] = useState<number>(0);
 
   // 获取商品列表
   function getPurchaseRecordsList() {
@@ -200,12 +202,16 @@ function PurchaseRecordsList(props: any) {
     //     '', 'AMER001', 'amer')
     // ];
     // setData(temp);
+    // setTotal(100);
+    // setLoading(false);
     let api = getPurchaseRecords(params);
     setLoading(true);
     api.then(response => {
       console.log(response);
       let list = response.data.purchaseRecordsList;
       setData(list);
+      let total = response.data.total;
+      setTotal(total);
     }).catch(reason => {
       console.error(reason);
       notification.error({message: '发生了错误', description: reason.toString()});
@@ -221,6 +227,7 @@ function PurchaseRecordsList(props: any) {
 
   // 处理表格变化
   function handleTableChange (pagination:any, filters:any, sorter:any) {
+    console.log(pagination);
     console.log(filters);
     console.log(sorter);
     // 是否含税筛选
@@ -283,7 +290,12 @@ function PurchaseRecordsList(props: any) {
             <AdvancedSearchForm conditions={conditions}/>
           </Form.Provider>
         </div>
-        <Table dataSource={data} rowKey={'id'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'id'}
+               pagination={{
+                 showTotal: (total) => '共 '+total+' 项',
+                 total: total
+               }}
+               loading={loading}
                onChange={handleTableChange}
                expandable={{
                  expandedRowRender: info =>

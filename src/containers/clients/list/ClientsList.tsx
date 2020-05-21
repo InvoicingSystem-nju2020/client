@@ -88,7 +88,9 @@ function ClientsList(props: any) {
 
   const [params, setParams] = useState<GetClientParams>({});  // 搜索筛选参数
 
-  let pageSize: number = 20;
+  // 分页
+  // const [pageSize, setPageSize] = useState<number>(20);
+  const [total, setTotal] = useState<number>(0);
 
   // 获取商品列表
   function getClientsList() {
@@ -98,6 +100,8 @@ function ClientsList(props: any) {
       console.log(response);
       let list = response.data.clientsList;
       setData(list);
+      let total = response.data.total;
+      setTotal(total);
     }).catch(reason => {
       console.error(reason);
       notification.error({message: '发生了错误', description: reason.toString()});
@@ -198,7 +202,12 @@ function ClientsList(props: any) {
             <AdvancedSearchForm conditions={conditions}/>
           </Form.Provider>
         </div>
-        <Table dataSource={data} rowKey={'clientsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'clientsNumber'}
+               pagination={{
+                 showTotal: (total) => '共 '+total+' 项',
+                 total: total
+               }}
+               loading={loading}
                onChange={handleTableChange}
         >
           <Column title={"客户编号"} dataIndex={"clientsNumber"} sorter={true}/>

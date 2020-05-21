@@ -142,7 +142,9 @@ function GoodsList(props: any) {
 
   const [params, setParams] = useState<GetGoodsParams>({});  // 搜索筛选参数
 
-  let pageSize: number = 20;
+  // 分页
+  // const [pageSize, setPageSize] = useState<number>(20);
+  const [total, setTotal] = useState<number>(0);
 
   // 获取商品列表
   function getGoodsList() {
@@ -157,6 +159,8 @@ function GoodsList(props: any) {
       console.log(response);
       let list = response.data.goodsList;
       setData(list);
+      let total = response.data.total;
+      setTotal(total);
     }).catch(reason => {
       console.error(reason);
       notification.error({message: '发生了错误', description: reason.toString()});
@@ -246,7 +250,12 @@ function GoodsList(props: any) {
             <AdvancedSearchForm conditions={conditions}/>
           </Form.Provider>
         </div>
-        <Table dataSource={data} rowKey={'goodsNumber'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'goodsNumber'}
+               pagination={{
+                 showTotal: (total) => '共 '+total+' 项',
+                 total: total
+               }}
+               loading={loading}
                onChange={handleTableChange}
                expandable={{
                  expandedRowRender: info =>

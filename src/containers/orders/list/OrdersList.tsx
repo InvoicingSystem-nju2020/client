@@ -153,7 +153,9 @@ function OrdersList(props: any) {
   // 获取选择的行
   const [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
-  let pageSize: number = 20;
+  // 分页
+  // const [pageSize, setPageSize] = useState<number>(20);
+  const [total, setTotal] = useState<number>(0);
 
   // 获取商品列表
   function getOrdersList() {
@@ -163,6 +165,8 @@ function OrdersList(props: any) {
       console.log(response);
       let list = response.data.ordersList;
       setData(list);
+      let total = response.data.total;
+      setTotal(total);
     }).catch(reason => {
       console.error(reason);
       notification.error({message: '发生了错误', description: reason.toString()});
@@ -283,7 +287,12 @@ function OrdersList(props: any) {
             <AdvancedSearchForm conditions={conditions}/>
           </Form.Provider>
         </div>
-        <Table dataSource={data} rowKey={'orderNumber'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'orderNumber'}
+               pagination={{
+                 showTotal: (total) => '共 '+total+' 项',
+                 total: total
+               }}
+               loading={loading}
                onChange={handleTableChange}
                rowSelection={{
                  fixed: true,

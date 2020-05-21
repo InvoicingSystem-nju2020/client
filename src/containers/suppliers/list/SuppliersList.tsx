@@ -92,7 +92,9 @@ function SuppliersList() {
   let [loading, setLoading] = useState(true);
   const [params, setParams] = useState<GetSuppliersParams>({});  // 搜索筛选参数
 
-  let pageSize: number = 20;
+  // 分页
+  // const [pageSize, setPageSize] = useState<number>(20);
+  const [total, setTotal] = useState<number>(0);
 
   // 获取商品列表
   function getSuppliersList() {
@@ -107,6 +109,8 @@ function SuppliersList() {
       console.log(response);
       let list = response.data.suppliersList;
       setData(list);
+      let total = response.data.total;
+      setTotal(total);
     }).catch(reason => {
       console.error(reason);
       notification.error({message: '发生了错误', description: reason.toString()});
@@ -169,7 +173,12 @@ function SuppliersList() {
             <AdvancedSearchForm conditions={conditions}/>
           </Form.Provider>
         </div>
-        <Table dataSource={data} rowKey={'supplierNumber'} pagination={{ pageSize: pageSize }} loading={loading}
+        <Table dataSource={data} rowKey={'supplierNumber'}
+               pagination={{
+                 showTotal: (total) => '共 '+total+' 项',
+                 total: total
+               }}
+               loading={loading}
                onChange={handleTableChange}
         >
           <Column title={"供应商编号"} dataIndex={"supplierNumber"} sorter={true}/>
