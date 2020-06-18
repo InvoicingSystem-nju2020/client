@@ -394,7 +394,7 @@ function WeeklyStatistics(props: any) {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
     });
-    // 假数据
+    // // 假数据
     // let weeklyInfo: WeeklyInfo = {
     //   sales: {num: 21342.3, increase: 6.7},
     //   income: {num: 5635.1, increase: -0.3},

@@ -396,7 +396,7 @@ function DailyStatistics(props: any) {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
     });
-    // 假数据
+    // // 假数据
     // let dailyInfo: DailyInfo = {
     //   sales: {num: 3405.3, increase: 9.3},
     //   income: {num: 1354.1, increase: -1.3},
@@ -426,7 +426,7 @@ function DailyStatistics(props: any) {
     // initPerStateChart(dailyInfo.perState);
     // initWriteAnInvoiceChart(dailyInfo.writeAnInvoice);
     // initPerHourChart(dailyInfo.perHour);
-    // // 设置加载完成状态
+    // 设置加载完成状态
     // setIsLoading(false);
   }, [date]);
 

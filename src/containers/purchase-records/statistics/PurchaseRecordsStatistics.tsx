@@ -298,7 +298,7 @@ function PurchaseRecordsStatistics(props: any) {
 
   // 获取并设置某一时间区间的图表，首次加载和设置时间区间后触发
   useEffect(() => {
-    setMonthIsLoading(true);
+    setTimeRangeIsLoading(true);
     // 某一时间区间的图表
     const api_getTimeRangeStatistics = getTimeRangeStatistics({startTime: timeRange[0], endTime: timeRange[1]});
     api_getTimeRangeStatistics.then(response => {
@@ -325,6 +325,7 @@ function PurchaseRecordsStatistics(props: any) {
     if(!brand || brand === ''){ // 首次加载或为空时不执行
       return;
     }
+    setBrandTimeRangeIsLoading(true);
     // 获取数据
     const api_getBrandTimeRangeStatistics = getBrandTimeRangeStatistics(
       {startTime: timeRange[0], endTime: timeRange[1], brand: brand}
@@ -335,7 +336,7 @@ function PurchaseRecordsStatistics(props: any) {
       // 绘制图表
       initBrandPerMonthTotalChart(brandPerMonthTotal);
       // 设置加载完成状态
-      setTimeRangeIsLoading(false);
+      setBrandTimeRangeIsLoading(false);
     }).catch(reason => {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
@@ -347,7 +348,7 @@ function PurchaseRecordsStatistics(props: any) {
     // setBrandPerMonthTotal(brandPerMonthTotal);
     // // 绘制图表
     // initBrandPerMonthTotalChart(brandPerMonthTotal);
-    // setTimeRangeIsLoading(false);
+    // setBrandTimeRangeIsLoading(false);
   }, [brand]);
 
   // 处理参数表单的提交

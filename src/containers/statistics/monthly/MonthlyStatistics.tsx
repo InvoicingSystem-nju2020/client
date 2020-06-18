@@ -395,7 +395,7 @@ function MonthlyStatistics(props: any) {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
     });
-    // 假数据
+    // // 假数据
     // let monthlyPerDay = [];
     // for(let i = 1; i <= 21; i++){
     //   let date = '2020/05/' + ((i < 10) ? '0' : '') + i;
