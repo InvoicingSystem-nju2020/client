@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 
-import {Input, AutoComplete, Col, Row, Form, Card} from 'antd';
+import {Input, AutoComplete, Col, Row, Form, Card, notification} from 'antd';
 import { SelectProps } from 'antd/es/select';
 import {FormInputSize} from "../../util/ComponentsUtil";
 import {FormItemProps} from "antd/es/form";
+import {getGoods, getGoodsByNumber} from "../../api/GoodsApi";
 
 
 class GoodsInfo{
@@ -46,6 +47,7 @@ const GoodsSearchAndShowByNumber = (props:GoodsSearchAndShowByNumberProps) => {
   const goodsNumberToShow = props.goodsNumberToShow;  // 是否指定预先显示的商品编号
   const isResetting = props.isResetting;  // 重置状态，状态提升
   const setIsResetting = props.setIsResetting;
+  const [goodsInfoToResetOnModifyingMode, setGoodsInfoToResetOnModifyingMode] = useState<GoodsInfo>();  // 修改时显示的默认商品
 
   // 组件加载时判断是否需要预先显示商品
   useEffect(() => {
@@ -57,57 +59,74 @@ const GoodsSearchAndShowByNumber = (props:GoodsSearchAndShowByNumberProps) => {
     }
   },[goodsNumberToShow, isResetting]);
 
-  // 搜索商品
-  const searchGoods = (query: string) => {
-    let result = [
-      new GoodsInfo('WQP00001', '室内器材',
-        '网球拍', 'wilson', 'pro staff', 'WRT74181U2', '碳纤维', '支', 2480),
-      new GoodsInfo('YQP00001', '室内器材',
-        '羽球拍', 'YONEX', 'VTLD-F', 'YY1032987', '碳纤维', '支', 2400),
-      new GoodsInfo('YMQ00001', '室内耗材',
-        '羽毛球', 'LINING', 'A+90', 'AYQD016-1', '鹅毛', '个', 112)
-    ];
-    setGoodsInfosResult(result);  // setState商品搜索结果
-    return result;
-  };
+  // // 搜索商品
+  // const searchGoods = (query: string) => {
+  //   let result = [
+  //     new GoodsInfo('WQP00001', '室内器材',
+  //       '网球拍', 'wilson', 'pro staff', 'WRT74181U2', '碳纤维', '支', 2480),
+  //     new GoodsInfo('YQP00001', '室内器材',
+  //       '羽球拍', 'YONEX', 'VTLD-F', 'YY1032987', '碳纤维', '支', 2400),
+  //     new GoodsInfo('YMQ00001', '室内耗材',
+  //       '羽毛球', 'LINING', 'A+90', 'AYQD016-1', '鹅毛', '个', 112)
+  //   ];
+  //   setGoodsInfosResult(result);  // setState商品搜索结果
+  //   return result;
+  // };
 
   // 展示搜索结果
   const searchResult = (query: string) => {
-    const result = searchGoods(query);
-    return result.map((item, index) => {
-      return {
-        value: item.goodsNumber,
-        label: (
-          <Row>
-            <Col xs={24} sm={10}>
-              {item.goodsNumber}
-            </Col>
-            <Col xs={24} sm={5}>
-              {item.abbreviation}
-            </Col>
-            <Col xs={24} sm={4}>
-              {item.brand}
-            </Col>
-            <Col xs={24} sm={5}>
-              {item.model}
-            </Col>
-          </Row>
-        )
-      }
+    // const result = searchGoods(query);
+    // 调用接口搜索
+    const api_getGoods = getGoods({goodsNumber: query, num: 10});
+    api_getGoods.then(response => {
+      let goodsList = response.data.goodsList;
+      setGoodsInfosResult(goodsList.map((item: any) => {
+        return {
+          goodsNumber: item.goodsNumber,
+          goodsName: item.goodsName,
+          abbreviation: item.abbreviation,
+          brand: item.brand,
+          model: item.model,
+          goodsNo: item.goodsNo,
+          material: item.material,
+          unit: item.unit,
+          retailPrice: item.retailPrice
+        };
+      }));
+      if(goodsList.length > 0 && goodsList[0].goodsNumber === query){    // 当输入的值就是搜索后最匹配的值时
+        selectAndShow(query);
+      };
+      const results = goodsList.map((item:GoodsInfo) => {
+        return {
+          value: item.goodsNumber,
+          label: (
+            <Row>
+              <Col xs={24} sm={10}>
+                {item.goodsNumber}
+              </Col>
+              <Col xs={24} sm={5}>
+                {item.abbreviation}
+              </Col>
+              <Col xs={24} sm={4}>
+                {item.brand}
+              </Col>
+              <Col xs={24} sm={5}>
+                {item.model}
+              </Col>
+            </Row>
+          )
+        }
+      });
+      setOptions(results);
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
     });
   };
 
   // 处理搜索输入
   const handleSearch = (value: string) => {
     if(value) {
-      let results = searchResult(value);
-      setOptions(results);
-      if(results.length > 0 && results[0].value === value){    // 当输入的值就是搜索后最匹配的值时
-        selectAndShow(value);
-      }
-      else {
-        setValidateStatus('error');
-      }
+      searchResult(value);
     }
     else{
       setOptions([]);
@@ -124,8 +143,28 @@ const GoodsSearchAndShowByNumber = (props:GoodsSearchAndShowByNumberProps) => {
   // 重置
   const reset = () => {
     if(goodsNumberToShow){  // 需要预先显示商品
-      searchGoods(goodsNumberToShow);
-      selectAndShow(goodsNumberToShow);
+      // searchGoods(goodsNumberToShow);
+      // selectAndShow(goodsNumberToShow);
+      if(!goodsInfoToResetOnModifyingMode){
+        // 首次需要获取需要显示商品的信息
+        const api_getGoodsByNumber = getGoodsByNumber(goodsNumberToShow);
+        api_getGoodsByNumber.then(response => {
+          let temp = response.data;
+          let info:GoodsInfo = {
+            goodsNumber: temp.goodsNumber, goodsName: temp.goodsName,
+            abbreviation: temp.abbreviation, brand: temp.brand, model: temp.model, goodsNo: temp.goodsNo,
+            material: temp.material, unit: temp.unit, retailPrice: temp.retailPrice
+          };
+          setGoodsInfoToResetOnModifyingMode(info);  // 首次获取之后进行记录，避免重置时重复获取
+          setGoodsInfosResult([info]);
+          selectAndShow(goodsNumberToShow);
+        }).catch(reason => {
+        });
+      }
+      else {  // 已经获取过，直接设置
+        setGoodsInfosResult([goodsInfoToResetOnModifyingMode]);
+        selectAndShow(goodsNumberToShow);
+      }
     }
     else{
       setSelectedGoodsNumber('');

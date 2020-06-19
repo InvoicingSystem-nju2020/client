@@ -36,6 +36,7 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
   const supplierNumberToShow = props.supplierNumberToShow;  // 是否指定预先显示的商品编号
   const isResetting = props.isResetting;  // 重置状态，状态提升
   const setIsResetting = props.setIsResetting;
+  const [supplierInfoToResetOnModifyingMode, setSupplierInfoToResetOnModifyingMode] = useState<SupplierInfo>();  // 修改时显示的默认供应商
 
   // 组件加载时判断是否需要预先显示供应商
   useEffect(() => {
@@ -50,9 +51,28 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
   // 重置
   const reset = () => {
     if(supplierNumberToShow){  // 需要预先显示供应商
-      // searchSupplier(supplierNumberToShow);
-      getSupplierInfo(supplierNumberToShow);
-      selectAndShow(supplierNumberToShow);
+      // getSupplierInfo(supplierNumberToShow);
+      // selectAndShow(supplierNumberToShow);
+      if(!supplierInfoToResetOnModifyingMode){
+        // 首次需要获取需要显示商品的信息
+        const api_getSupplierByNumber = getSupplierByNumber(supplierNumberToShow);
+        api_getSupplierByNumber.then(response => {
+          let temp = response.data;
+          let info:SupplierInfo = {
+            supplierNumber: temp.supplierNumber, supplierName: temp.supplierName,
+            purchasingCategories: temp.purchasingCategories, productionCategory: temp.productionCategory,
+            remarks: temp.remarks
+          };
+          setSupplierInfoToResetOnModifyingMode(info);  // 首次获取之后进行记录，避免重置时重复获取
+          setSupplierInfosResult([info]);
+          selectAndShow(supplierNumberToShow);
+        }).catch(reason => {
+        });
+      }
+      else {  // 已经获取过，直接设置
+        setSupplierInfosResult([supplierInfoToResetOnModifyingMode]);
+        selectAndShow(supplierNumberToShow);
+      }
     }
     else{
       setSelectedSupplierNumber('');
@@ -72,23 +92,6 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
   //   return result;
   // };
 
-  // 获取确定编号的供应商
-  const getSupplierInfo = (supplierNumber: string) => {
-    const api_getSupplier = getSupplierByNumber(supplierNumber);
-    api_getSupplier.then(response => {
-      let info = response.data;
-      setSupplierInfosResult([{
-        supplierNumber: info.supplierNumber,
-        supplierName: info.supplierName,
-        productionCategory: info.productionCategory,
-        remarks: info.remarks,
-        purchasingCategories: info.puchasingCategories
-      }]);
-    }).catch(reason => {
-      notification.error({message: '发生了错误', description: reason.toString()});
-    });
-  };
-
   // 展示搜索结果
   const searchResult = (query: string) => {
     // const suppliers = searchSupplier(query);
@@ -105,6 +108,9 @@ const SupplierSearchAndShow = (props:SuppliersSearchAndShowProps) => {
           purchasingCategories: item.purchasingCategories
         };
       }));
+      if(suppliers.length > 0 && suppliers[0].supplierNumber === query){    // 当输入的值就是搜索后最匹配的值时
+        selectAndShow(query);
+      };
       const results = suppliers.map((item: any, index:number) => {
         return {
           value: item.supplierNumber,

@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
 import {SelectProps} from "antd/es/select";
 import {FormItemProps} from "antd/es/form";
-import {AutoComplete, Card, Col, Form, Input, Row, Select} from "antd";
+import {AutoComplete, Card, Col, Form, Input, notification, Row, Select} from "antd";
 import {FormInputSize} from "../../util/ComponentsUtil";
 import {FormInstance} from "antd/lib/form/util";
+import {getClientByNumber, getClients} from "../../api/ClientApi";
 
 
 const { Option } = Select;
@@ -35,7 +36,8 @@ const ClientSearch = (props:ClientSearchProps) => {
   const clientNumber = props.clientNumber;  // 是否指定预先显示的客户编号
   const isResetting = props.isResetting;  // 重置状态，状态提升
   const setIsResetting = props.setIsResetting;
-  // 已选客户编号，状态提升，使得form能获取到编号
+  const [clientNameToResetOnModifyingMode, setClientNameToResetOnModifyingMode] = useState<string>();  // 修改时显示的默认客户名称
+
 
   // 组件加载时判断是否需要预先显示商品
   useEffect(() => {
@@ -64,10 +66,22 @@ const ClientSearch = (props:ClientSearchProps) => {
       else {  // 有客户
         setIsRetail(0);
         // 设置显示客户名称和客户编号
-        let name = getClientNameByNumber(clientNumber);
-        props.form?.setFieldsValue({clientName: name});
-        setSelectedClientNumber(clientNumber);
-        setValidateStatus('success');   // 设置表单校验状态
+        // let name = getClientNameByNumber(clientNumber);
+        if(!clientNameToResetOnModifyingMode){  // 首次获取时
+          const api_getClientByNumber = getClientByNumber(clientNumber);
+          api_getClientByNumber.then(response => {
+            let name = response.data.clientsName;
+            props.form?.setFieldsValue({clientName: name});
+            setSelectedClientNumber(clientNumber);
+            setClientNameToResetOnModifyingMode(name);  // 首次获取之后进行记录，避免重置时重复获取
+            setValidateStatus('success');   // 设置表单校验状态
+          })
+        }
+        else{
+          props.form?.setFieldsValue({clientName: clientNameToResetOnModifyingMode});
+          setSelectedClientNumber(clientNumber);
+          setValidateStatus('success');   // 设置表单校验状态
+        }
       }
     }
     else{
@@ -76,51 +90,67 @@ const ClientSearch = (props:ClientSearchProps) => {
     }
   };
 
-  // 通过clientNumber获取客户
-  const getClientNameByNumber = (clientNumber: string) => {
-    let result: string;
-    result = '南京海关';
-    return result;
-  }
+  // // 通过clientNumber获取客户
+  // const getClientNameByNumber = (clientNumber: string) => {
+  //   let result: string;
+  //   result = '南京海关';
+  //   return result;
+  // }
 
-  // 搜索客户
-  const searchClients = (query: string) => {
-    let result = [
-      new ClientInfo('TFS2010-001', '江苏省网球协会')
-    ];
-    setClientInfosResult(result);
-    return result;
-  };
+  // // 搜索客户
+  // const searchClients = (query: string) => {
+  //   let result = [
+  //     new ClientInfo('TFS2010-001', '江苏省网球协会')
+  //   ];
+  //   setClientInfosResult(result);
+  //   return result;
+  // };
 
   // 展示搜索结果
   const searchResult = (query: string) => {
-    const result = searchClients(query);
+    // const result = searchClients(query);
 
-    return result.map((item, index) => {
-      return {
-        key: item.number,
-        value: item.name,    // 使用json格式一起记录编号
-        label: (
-          <Row>
-            <Col xs={24} sm={14}>
-              {item.name}
-            </Col>
-            <Col xs={24} sm={10}>
-              {item.number}
-            </Col>
-          </Row>
-        )
-      }
+    // 调用接口搜索
+    const api_getClients = getClients({clientsName: query, num: 10});
+    api_getClients.then(response => {
+      let clientsList = response.data.clientsList;
+      setClientInfosResult(clientsList.map((item: any) => {
+        return {
+          number: item.clientsNumber,
+          name: item.clientsName
+        };
+      }));
+      const results = clientsList.map((item: ClientInfo) => {
+        return {
+          key: item.number,
+          value: item.name,    // 使用json格式一起记录编号
+          label: (
+            <Row>
+              <Col xs={24} sm={14}>
+                {item.name}
+              </Col>
+              <Col xs={24} sm={10}>
+                {item.number}
+              </Col>
+            </Row>
+          )
+        }
+      });
+      setOptions(results);
+    }).catch(reason => {
+      notification.error({message: '发生了错误', description: reason.toString()});
     });
   };
 
   // 处理搜索输入
   const handleSearch = (value: string) => {
-    if(value){
-      let results = searchResult(value);
-      setOptions(results);
+    if(value) {
+      searchResult(value);
     }
-    setValidateStatus('error');
+    else{
+      setOptions([]);
+      setValidateStatus('error');
+    }
   };
 
   // 处理选择
