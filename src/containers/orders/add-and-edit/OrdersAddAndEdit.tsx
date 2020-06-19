@@ -10,7 +10,7 @@ import {
   DatePicker,
   Space,
   Popconfirm,
-  message, notification
+  message, notification, Spin
 } from "antd";
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
@@ -36,6 +36,7 @@ function OrdersAddAndEdit(props: any) {
   const [orderInfoToEdit, setOrderInfoToEdit] = useState<OrderInfo>();
   const orderNumber: string = props.match.params.orderNumber;
   const isEdit: boolean = !!orderNumber;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   // 商品搜索框重置状态(状态提升至此，从而使得能够控制重置)
   const [isResetting, setIsResetting] = useState<boolean>(false);
 
@@ -74,6 +75,7 @@ function OrdersAddAndEdit(props: any) {
     if(!isEdit || !orderNumber){
       return;
     }
+    setIsLoading(true);
     // 获取原本的信息
     const hideMessage = message.loading('正在加载订单...', 0);
     let api_getOrderByNumber = getOrderByNumber(orderNumber);
@@ -81,6 +83,7 @@ function OrdersAddAndEdit(props: any) {
       let info = response.data;
       setOrderInfoToEdit(info);  // 记录要被修改的原有信息
       form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+      setIsLoading(false);
     }).catch(reason => {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
@@ -214,172 +217,174 @@ function OrdersAddAndEdit(props: any) {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer ContentPadding"}>
-          <Form.Item
-            label={"售货员"}
-            name={"salesPerson"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入售货员'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <ClientSearch
-            clientNumber={orderInfoToEdit?.clientNumber}
-            isResetting={isResetting}
-            setIsResetting={setIsResetting}
-            form={form}
-          />
-          <Form.Item
-            label={"是否开票"}
-            name={"writeAnInvoice"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请选择是否开票'
-              }
-            ]}
-          >
-            <Select>
-              <Option value={0}>否</Option>
-              <Option value={1}>是</Option>
-            </Select>
-          </Form.Item>
-          <GoodsSearchAndShowByNumber
-            showPrice={true}
-            goodsNumberToShow={orderInfoToEdit?.goodsNumber}
-            isResetting={isResetting}
-            setIsResetting={setIsResetting}
-          />
-          <Form.Item
-            label={"成交价"}
-            name={"finalPrice"}
+        <Spin spinning={isLoading}>
+          <div className={"ContentContainer ContentPadding"}>
+            <Form.Item
+              label={"售货员"}
+              name={"salesPerson"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入售货员'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <ClientSearch
+              clientNumber={orderInfoToEdit?.clientNumber}
+              isResetting={isResetting}
+              setIsResetting={setIsResetting}
+              form={form}
+            />
+            <Form.Item
+              label={"是否开票"}
+              name={"writeAnInvoice"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请选择是否开票'
+                }
+              ]}
+            >
+              <Select>
+                <Option value={0}>否</Option>
+                <Option value={1}>是</Option>
+              </Select>
+            </Form.Item>
+            <GoodsSearchAndShowByNumber
+              showPrice={true}
+              goodsNumberToShow={orderInfoToEdit?.goodsNumber}
+              isResetting={isResetting}
+              setIsResetting={setIsResetting}
+            />
+            <Form.Item
+              label={"成交价"}
+              name={"finalPrice"}
 
-            hasFeedback
-            validateFirst={true}
-            rules={[
-              {
-                required: true,
-                message: '请输入成交价'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的成交价，>0'
-              },
-              {
-                pattern: Regex.price,
-                message: '请输入正确格式的成交价，例如50、100.52'
-              },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"数量"}
-            name={"numbers"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入数量'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的数量，>0'
-              }
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"总金额"}
-            name={"totalAmount"}
-            validateFirst={true}
-            rules={[
-              {
-                required: true,
-                message: '请输入总金额'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的总金额，>0'
-              },
-              {
-                pattern: Regex.price,
-                message: '请输入正确格式的总金额，例如50、100.52'
-              },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"付款方式"}
-            name={"typeOfPayment"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请选择付款方式'
-              }
-            ]}
-          >
-            <Select value={typeOfPayment} onChange={onTypeOfPaymentChange}>
-              <Option value={'现金'}>现金</Option>
-              <Option value={'预支付'}>预支付</Option>
-              <Option value={'赊账'}>赊账</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label={"运输方式"}
-            name={"typeOfShipping"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请选择运输方式'
-              }
-            ]}
-          >
-            <Select>
-              <Option value={'自提'}>自提</Option>
-              <Option value={'邮寄'}>邮寄</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label={"订单状态"}
-            name={"state"}
-            rules={[
-              {
-                required: true,
-                message: '请选择订单状态'
-              }
-            ]}
-          >
-            <Select options={stateOptions}></Select>
-          </Form.Item>
-          <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
-            <Button type="primary" htmlType="submit" size="large">
-              <CheckOutlined />确认
-            </Button>
-          </Form.Item>
-        </div>
+              hasFeedback
+              validateFirst={true}
+              rules={[
+                {
+                  required: true,
+                  message: '请输入成交价'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的成交价，>0'
+                },
+                {
+                  pattern: Regex.price,
+                  message: '请输入正确格式的成交价，例如50、100.52'
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"数量"}
+              name={"numbers"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入数量'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的数量，>0'
+                }
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"总金额"}
+              name={"totalAmount"}
+              validateFirst={true}
+              rules={[
+                {
+                  required: true,
+                  message: '请输入总金额'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的总金额，>0'
+                },
+                {
+                  pattern: Regex.price,
+                  message: '请输入正确格式的总金额，例如50、100.52'
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"付款方式"}
+              name={"typeOfPayment"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请选择付款方式'
+                }
+              ]}
+            >
+              <Select value={typeOfPayment} onChange={onTypeOfPaymentChange}>
+                <Option value={'现金'}>现金</Option>
+                <Option value={'预支付'}>预支付</Option>
+                <Option value={'赊账'}>赊账</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label={"运输方式"}
+              name={"typeOfShipping"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请选择运输方式'
+                }
+              ]}
+            >
+              <Select>
+                <Option value={'自提'}>自提</Option>
+                <Option value={'邮寄'}>邮寄</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label={"订单状态"}
+              name={"state"}
+              rules={[
+                {
+                  required: true,
+                  message: '请选择订单状态'
+                }
+              ]}
+            >
+              <Select options={stateOptions}></Select>
+            </Form.Item>
+            <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
+              <Button type="primary" htmlType="submit" size="large">
+                <CheckOutlined />确认
+              </Button>
+            </Form.Item>
+          </div>
+        </Spin>
       </Form>
     </div>
   );

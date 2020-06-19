@@ -10,7 +10,7 @@ import {
   Space,
   Popconfirm,
   message,
-  notification
+  notification, Spin
 } from "antd";
 import { Form } from "antd";
 import { DeleteOutlined, ReloadOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
@@ -29,6 +29,7 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
   const [supplierInfoToEdit, setSupplierInfoToEdit] = useState<SupplierInfo>();
   const supplierNumber: string = props.match.params.supplierNumber;
   const isEdit: boolean = !!supplierNumber;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const onFinish = (v:any) => {
     form.validateFields()
@@ -58,6 +59,7 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
     if(!isEdit || !supplierNumber){
       return;
     }
+    setIsLoading(true);
     // 获取原本的信息
     const hideMessage = message.loading('正在加载供应商信息...', 0);
     let api_getSupplierByNumber = getSupplierByNumber(supplierNumber);
@@ -65,6 +67,7 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
       let info = response.data;
       setSupplierInfoToEdit(info);
       form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+      setIsLoading(false);
     }).catch(reason => {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
@@ -148,147 +151,149 @@ const SuppliersAddAndEdit: React.FC = (props:any) => {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer ContentPadding"}>
-          <Form.Item
-            label={"供应商名"}
-            name={"supplierName"}
-            hasFeedback
-            rules={[
-              {
-              required: true,
-              message: '请输入供应商名'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"联系方式"}
-            name={"contactInformation"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入联系人的联系方式'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"备注"}
-            name={"remarks"}
-            hasFeedback
-          >
-            <Input.TextArea
-              autoSize={{ minRows: 2, maxRows: 6 }}
-              placeholder={"可不填"}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"生产类别"}
-            name={"productionCategory"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入生产类别'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"采购类别"}
-            name={"purchasingCategories"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入采购类别'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"法人"}
-            name={"legalPerson"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入法人'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"联系人"}
-            name={"contact"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入联系人'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"性别"}
-            name={"sex"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入联系人的性别'
-              }
-            ]}
-          >
-            <Select >
-              <Select.Option value={'男'}>男</Select.Option>
-              <Select.Option value={'女'}>女</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label={"职务"}
-            name={"post"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入联系人的职务'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label={"邮箱"}
-            name={"mail"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入客户的邮箱'
-              },
-              {
-                type: 'email',
-                message: '请输入正确的邮箱'
-              }
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
-            <Button type="primary" htmlType="submit" size="large">
-              <CheckOutlined/>确认
-            </Button>
-          </Form.Item>
-        </div>
+        <Spin spinning={isLoading}>
+          <div className={"ContentContainer ContentPadding"}>
+            <Form.Item
+              label={"供应商名"}
+              name={"supplierName"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入供应商名'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"联系方式"}
+              name={"contactInformation"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入联系人的联系方式'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"备注"}
+              name={"remarks"}
+              hasFeedback
+            >
+              <Input.TextArea
+                autoSize={{ minRows: 2, maxRows: 6 }}
+                placeholder={"可不填"}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"生产类别"}
+              name={"productionCategory"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入生产类别'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"采购类别"}
+              name={"purchasingCategories"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入采购类别'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"法人"}
+              name={"legalPerson"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入法人'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"联系人"}
+              name={"contact"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入联系人'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"性别"}
+              name={"sex"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入联系人的性别'
+                }
+              ]}
+            >
+              <Select >
+                <Select.Option value={'男'}>男</Select.Option>
+                <Select.Option value={'女'}>女</Select.Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label={"职务"}
+              name={"post"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入联系人的职务'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              label={"邮箱"}
+              name={"mail"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入客户的邮箱'
+                },
+                {
+                  type: 'email',
+                  message: '请输入正确的邮箱'
+                }
+              ]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
+              <Button type="primary" htmlType="submit" size="large">
+                <CheckOutlined/>确认
+              </Button>
+            </Form.Item>
+          </div>
+        </Spin>
       </Form>
     </div>
   );

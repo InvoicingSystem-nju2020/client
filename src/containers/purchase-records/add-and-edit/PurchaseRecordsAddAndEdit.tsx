@@ -10,7 +10,7 @@ import {
   DatePicker,
   Space,
   Popconfirm,
-  message, notification
+  message, notification, Spin, Col
 } from "antd";
 
 import { Form } from "antd";
@@ -35,6 +35,7 @@ function PurchaseRecordsAddAndEdit(props: any) {
   const [purchaseRecordInfoToEdit, setPurchaseRecordInfoToEdit] = useState<PurchaseRecordInfo>();
   const id: string = props.match.params.id;
   const isEdit: boolean = !!id;
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   // 商品搜索框重置状态(状态提升至此，从而使得能够控制重置)
   const [isResetting, setIsResetting] = useState<boolean>(false);
 
@@ -74,6 +75,7 @@ function PurchaseRecordsAddAndEdit(props: any) {
     if(!isEdit || !id){
       return;
     }
+    setIsLoading(true);
     // 获取原本的信息
     const hideMessage = message.loading('正在加载进货记录...', 0);
     let api_getPurchaseRecordById = getPurchaseRecordById(id);
@@ -83,6 +85,7 @@ function PurchaseRecordsAddAndEdit(props: any) {
       info.purchaseTime = moment(info.purchaseTime, DateFormat.monthFormat);
       setPurchaseRecordInfoToEdit(info);  // 记录要被修改的原有信息
       form.setFieldsValue(info);    // 初始化设置要被修改的原有信息
+      setIsLoading(false);
     }).catch(reason => {
       notification.error({message: '发生了错误', description: reason.toString()});
     }).finally(() => {
@@ -180,156 +183,158 @@ function PurchaseRecordsAddAndEdit(props: any) {
           ]}
         >
         </PageHeader>
-        <div className={"ContentContainer ContentPadding"}>
-          <Form.Item
-            label={"进货时间"}
-            name={"purchaseTime"}
-            hasFeedback
-            rules={[
-              {
-              required: true,
-              message: '请选择进货时间'
-              }
-            ]}
-          >
-            <DatePicker format={DateFormat.monthFormat} picker={'month'} inputReadOnly/>
-          </Form.Item>
-          <GoodsSearchAndShowByNumber
-            showPrice={true}
-            goodsNumberToShow={purchaseRecordInfoToEdit?.goodsNumber}
-            isResetting={isResetting}
-            setIsResetting={setIsResetting}
-          />
-          <Form.Item
-            label={"数量"}
-            name={"numbers"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入进货数量'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的商品数量，>0'
-              }
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
+        <Spin spinning={isLoading}>
+          <div className={"ContentContainer ContentPadding"}>
+            <Form.Item
+              label={"进货时间"}
+              name={"purchaseTime"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请选择进货时间'
+                }
+              ]}
+            >
+              <DatePicker format={DateFormat.monthFormat} picker={'month'} inputReadOnly/>
+            </Form.Item>
+            <GoodsSearchAndShowByNumber
+              showPrice={true}
+              goodsNumberToShow={purchaseRecordInfoToEdit?.goodsNumber}
+              isResetting={isResetting}
+              setIsResetting={setIsResetting}
             />
-          </Form.Item>
-          <Form.Item
-            label={"折扣"}
-            name={"discount"}
-            hasFeedback
-            rules={[
-              {
-                required: true,
-                message: '请输入折扣'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的折扣，>0'
-              }
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
+            <Form.Item
+              label={"数量"}
+              name={"numbers"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入进货数量'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的商品数量，>0'
+                }
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"折扣"}
+              name={"discount"}
+              hasFeedback
+              rules={[
+                {
+                  required: true,
+                  message: '请输入折扣'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的折扣，>0'
+                }
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"单价"}
+              name={"unitPrice"}
+              validateFirst={true}
+              rules={[
+                {
+                  required: true,
+                  message: '请输入商品的单价'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的商品单价，>0'
+                },
+                {
+                  pattern: Regex.price,
+                  message: '请输入正确格式的商品单价，例如50、100.52'
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"金额"}
+              name={"totalAmount"}
+              validateFirst={true}
+              rules={[
+                {
+                  required: true,
+                  message: '请输入总金额'
+                },
+                {
+                  type: 'number',
+                  min: 0,
+                  message: '请输入正确的总金额，>0'
+                },
+                {
+                  pattern: Regex.price,
+                  message: '请输入正确格式的总金额，例如50、100.52'
+                },
+              ]}
+            >
+              <InputNumber
+                min={0}
+                style={{width: "100%"}}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"是否含税"}
+              name={"taxIncluded"}
+            >
+              <Select>
+                <Option value={1}>是</Option>
+                <Option value={0}>否</Option>
+              </Select>
+            </Form.Item>
+            <Form.Item
+              label={"保存注意事项"}
+              name={"precautionsForPreservation"}
+            >
+              <Input.TextArea
+                autoSize={{ minRows: 2, maxRows: 6 }}
+                placeholder={"可不填"}
+              />
+            </Form.Item>
+            <Form.Item
+              label={"备注"}
+              name={"remarks"}
+            >
+              <Input.TextArea
+                autoSize={{ minRows: 2, maxRows: 6 }}
+                placeholder={"可不填"}
+              />
+            </Form.Item>
+            <SupplierSearchAndShow
+              supplierNumberToShow={purchaseRecordInfoToEdit?.supplierNumber}
+              isResetting={isResetting}
+              setIsResetting={setIsResetting}
             />
-          </Form.Item>
-          <Form.Item
-            label={"单价"}
-            name={"unitPrice"}
-            validateFirst={true}
-            rules={[
-              {
-                required: true,
-                message: '请输入商品的单价'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的商品单价，>0'
-              },
-              {
-                pattern: Regex.price,
-                message: '请输入正确格式的商品单价，例如50、100.52'
-              },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"金额"}
-            name={"totalAmount"}
-            validateFirst={true}
-            rules={[
-              {
-                required: true,
-                message: '请输入总金额'
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: '请输入正确的总金额，>0'
-              },
-              {
-                pattern: Regex.price,
-                message: '请输入正确格式的总金额，例如50、100.52'
-              },
-            ]}
-          >
-            <InputNumber
-              min={0}
-              style={{width: "100%"}}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"是否含税"}
-            name={"taxIncluded"}
-          >
-            <Select>
-              <Option value={1}>是</Option>
-              <Option value={0}>否</Option>
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label={"保存注意事项"}
-            name={"precautionsForPreservation"}
-          >
-            <Input.TextArea
-              autoSize={{ minRows: 2, maxRows: 6 }}
-              placeholder={"可不填"}
-            />
-          </Form.Item>
-          <Form.Item
-            label={"备注"}
-            name={"remarks"}
-          >
-            <Input.TextArea
-              autoSize={{ minRows: 2, maxRows: 6 }}
-              placeholder={"可不填"}
-            />
-          </Form.Item>
-          <SupplierSearchAndShow
-            supplierNumberToShow={purchaseRecordInfoToEdit?.supplierNumber}
-            isResetting={isResetting}
-            setIsResetting={setIsResetting}
-          />
-          <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
-            <Button type="primary" htmlType="submit" size="large">
-              <CheckOutlined />确认
-            </Button>
-          </Form.Item>
-        </div>
+            <Form.Item wrapperCol={{ span: 12, offset: 2 }}>
+              <Button type="primary" htmlType="submit" size="large">
+                <CheckOutlined />确认
+              </Button>
+            </Form.Item>
+          </div>
+        </Spin>
       </Form>
     </div>
   );
