@@ -4,12 +4,13 @@ import { BaseParam } from '../../util/config';
 import { Icon_OrdersManage, Icon_PurchaseManage, Icon_ClientsManage, Icon_SuppliersManage } from '../svg-icon/SvgIcon'
 
 import React, {useEffect, useState} from 'react';
-import { Menu } from 'antd';
+import {Avatar, Menu} from 'antd';
 import Icon from '@ant-design/icons';
 import { HomeOutlined, ShoppingOutlined, PieChartOutlined } from '@ant-design/icons';
 import { Link, withRouter } from 'react-router-dom';
 
 import './SideMenu.css'
+import AvatarWithMenu from "../avatar-with-menu/AvatarWithMenu";
 
 const { SubMenu } = Menu;
 
@@ -53,6 +54,7 @@ function SideMenu(props: any) {
 
   return (
     <div className="SideMenu">
+      <AvatarWithMenu/>
       <Menu
         selectedKeys={[selectedKey]}
         openKeys={openKeys}

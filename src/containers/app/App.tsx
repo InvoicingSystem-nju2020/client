@@ -37,12 +37,26 @@ import DailyStatistics from "../statistics/daily/DailyStatistics";
 import WeeklyStatistics from "../statistics/weekly/WeeklyStatistics";
 import MonthlyStatistics from "../statistics/monthly/MonthlyStatistics";
 import Home from "../home/Home";
+import {UserContext} from "../../context/usercontext/UserContext";
+import Login from "../login/Login";
 
 const { Content, Sider } = Layout;
 
 
+export interface UserInfo {
+  username: string,
+  type: string
+}
+const DEFAULT_USER_INFO:UserInfo = {username: "", type: "未登录"};
+
 const App: React.FC = () => {
   const supportsHistory = 'pushState' in window.history;
+
+  // 用户
+  const [user, setUser] = useState<UserInfo>(DEFAULT_USER_INFO);
+  const logout = function () {
+    setUser(DEFAULT_USER_INFO)
+  };
 
   // 获取辅助接口
   const [assistData, setAssistData] = useState<AssistData>({
@@ -67,77 +81,85 @@ const App: React.FC = () => {
 
   return (
     <BrowserRouter forceRefresh={!supportsHistory}>
-      <div className="App">
-        <Layout>
-          <Sider className="Sider">
-            <SideMenu/>
-          </Sider>
-          <Content className="Content">
-            <div
-              style={{
-                backgroundColor: '#F5F5F5',
-                padding: 24,
-                height: '100vh'
-              }}
-            >
-              <RouterSwitch>
-                <Route path="/orders">
-                  <RouterSwitch>
-                    <Route path="/orders/list" component={() => <OrdersList assistData={assistData}/>}/>
-                    <Route path="/orders/add" component={OrdersAddAndEdit}/>
-                    <Route path="/orders/edit/:orderNumber" component={OrdersAddAndEdit}/>
-                    <Redirect to="/orders/list"/>
-                  </RouterSwitch>
-                </Route>
-                <Route path="/purchase-records">
-                  <RouterSwitch>
-                    <Route path="/purchase-records/list" component={() => <PurchaseRecordsList assistData={assistData}/>}/>
-                    <Route path="/purchase-records/add" component={PurchaseRecordsAddAndEdit}/>
-                    <Route path="/purchase-records/edit/:id" component={PurchaseRecordsAddAndEdit}/>
-                    <Route path="/purchase-records/statistics" component={() => <PurchaseRecordsStatistics assistData={assistData}/>}/>
-                    <Redirect to="/purchase-records/list"/>
-                  </RouterSwitch>
-                </Route>
-                <Route path="/goods">
-                  <RouterSwitch>
-                    <Route path="/goods/list" component={() => <GoodsList assistData={assistData}/>}/>
-                    <Route path="/goods/add" component={GoodsAddAndEdit}/>
-                    <Route path="/goods/edit/:goodsNumber" component={GoodsAddAndEdit}/>
-                    <Redirect to="/goods/list"/>
-                  </RouterSwitch>
-                </Route>
-                <Route path="/clients">
-                  <RouterSwitch>
-                    <Route path="/clients/list" component={ClientsList}/>
-                    <Route path="/clients/add" component={ClientsAddAndEdit}/>
-                    <Route path="/clients/edit/:clientsNumber" component={ClientsAddAndEdit}/>
-                    <Route path="/clients/balance-records/:clientsNumber" component={ClientBalanceRecordsList}/>
-                    <Redirect to="/clients/list"/>
-                  </RouterSwitch>
-                </Route>
-                <Route path="/suppliers">
-                  <RouterSwitch>
-                    <Route path="/suppliers/list" component={SuppliersList}/>
-                    <Route path="/suppliers/add" component={SuppliersAddAndEdit}/>
-                    <Route path="/suppliers/edit/:supplierNumber" component={SuppliersAddAndEdit}/>
-                    <Redirect to="/suppliers/list"/>
-                  </RouterSwitch>
-                </Route>
-                <Route path="/statistics">
-                  <RouterSwitch>
-                    <Route path="/statistics/daily" component={DailyStatistics}/>
-                    <Route path="/statistics/weekly" component={WeeklyStatistics}/>
-                    <Route path="/statistics/monthly" component={MonthlyStatistics}/>
-                    <Redirect to="/statistics/daily"/>
-                  </RouterSwitch>
-                </Route>
-                <Route path="/" component={Home} exact/>
-                <Redirect to="/"/>
-              </RouterSwitch>
+      {/*提供用户上下文*/}
+      <UserContext.Provider value={{user, setUser, logout}}>
+        <RouterSwitch>
+          <Route path="/login" component={Login}/>
+          <Route path="/">
+            <div className="App">
+              <Layout>
+                <Sider className="Sider">
+                  <SideMenu/>
+                </Sider>
+                <Content className="Content">
+                  <div
+                    style={{
+                      backgroundColor: '#F5F5F5',
+                      padding: 24,
+                      height: '100vh'
+                    }}
+                  >
+                    <RouterSwitch>
+                      <Route path="/orders">
+                        <RouterSwitch>
+                          <Route path="/orders/list" component={() => <OrdersList assistData={assistData}/>}/>
+                          <Route path="/orders/add" component={OrdersAddAndEdit}/>
+                          <Route path="/orders/edit/:orderNumber" component={OrdersAddAndEdit}/>
+                          <Redirect to="/orders/list"/>
+                        </RouterSwitch>
+                      </Route>
+                      <Route path="/purchase-records">
+                        <RouterSwitch>
+                          <Route path="/purchase-records/list" component={() => <PurchaseRecordsList assistData={assistData}/>}/>
+                          <Route path="/purchase-records/add" component={PurchaseRecordsAddAndEdit}/>
+                          <Route path="/purchase-records/edit/:id" component={PurchaseRecordsAddAndEdit}/>
+                          <Route path="/purchase-records/statistics" component={() => <PurchaseRecordsStatistics assistData={assistData}/>}/>
+                          <Redirect to="/purchase-records/list"/>
+                        </RouterSwitch>
+                      </Route>
+                      <Route path="/goods">
+                        <RouterSwitch>
+                          <Route path="/goods/list" component={() => <GoodsList assistData={assistData}/>}/>
+                          <Route path="/goods/add" component={GoodsAddAndEdit}/>
+                          <Route path="/goods/edit/:goodsNumber" component={GoodsAddAndEdit}/>
+                          <Redirect to="/goods/list"/>
+                        </RouterSwitch>
+                      </Route>
+                      <Route path="/clients">
+                        <RouterSwitch>
+                          <Route path="/clients/list" component={ClientsList}/>
+                          <Route path="/clients/add" component={ClientsAddAndEdit}/>
+                          <Route path="/clients/edit/:clientsNumber" component={ClientsAddAndEdit}/>
+                          <Route path="/clients/balance-records/:clientsNumber" component={ClientBalanceRecordsList}/>
+                          <Redirect to="/clients/list"/>
+                        </RouterSwitch>
+                      </Route>
+                      <Route path="/suppliers">
+                        <RouterSwitch>
+                          <Route path="/suppliers/list" component={SuppliersList}/>
+                          <Route path="/suppliers/add" component={SuppliersAddAndEdit}/>
+                          <Route path="/suppliers/edit/:supplierNumber" component={SuppliersAddAndEdit}/>
+                          <Redirect to="/suppliers/list"/>
+                        </RouterSwitch>
+                      </Route>
+                      <Route path="/statistics">
+                        <RouterSwitch>
+                          <Route path="/statistics/daily" component={DailyStatistics}/>
+                          <Route path="/statistics/weekly" component={WeeklyStatistics}/>
+                          <Route path="/statistics/monthly" component={MonthlyStatistics}/>
+                          <Redirect to="/statistics/daily"/>
+                        </RouterSwitch>
+                      </Route>
+                      <Route path="/" component={Home} exact/>
+                      <Redirect to="/"/>
+                    </RouterSwitch>
+                  </div>
+                </Content>
+              </Layout>
             </div>
-          </Content>
-        </Layout>
-      </div>
+          </Route>
+        </RouterSwitch>
+      </UserContext.Provider>
     </BrowserRouter>
   );
 };
