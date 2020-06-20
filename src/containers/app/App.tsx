@@ -36,6 +36,7 @@ import PurchaseRecordsStatistics from "../purchase-records/statistics/PurchaseRe
 import DailyStatistics from "../statistics/daily/DailyStatistics";
 import WeeklyStatistics from "../statistics/weekly/WeeklyStatistics";
 import MonthlyStatistics from "../statistics/monthly/MonthlyStatistics";
+import Home from "../home/Home";
 
 const { Content, Sider } = Layout;
 
@@ -130,7 +131,7 @@ const App: React.FC = () => {
                     <Redirect to="/statistics/daily"/>
                   </RouterSwitch>
                 </Route>
-                <Route path="/" exact>home</Route>
+                <Route path="/" component={Home} exact/>
                 <Redirect to="/"/>
               </RouterSwitch>
             </div>

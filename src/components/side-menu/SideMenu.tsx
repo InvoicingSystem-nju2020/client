@@ -69,7 +69,7 @@ function SideMenu(props: any) {
           key="orders"
           title={
             <span>
-              <Icon component={Icon_OrdersManage} />
+              <Icon component={() => <Icon_OrdersManage/>} />
               <span>订单管理</span>
             </span>
           }
@@ -81,7 +81,7 @@ function SideMenu(props: any) {
           key="purchase-records"
           title={
             <span>
-              <Icon component={Icon_PurchaseManage} />
+              <Icon component={() => <Icon_PurchaseManage/>} />
               <span>进货管理</span>
             </span>
           }
@@ -106,7 +106,7 @@ function SideMenu(props: any) {
           key="clients"
           title={
             <span>
-              <Icon component={Icon_ClientsManage} />
+              <Icon component={() => <Icon_ClientsManage/>} />
               <span>客户管理</span>
             </span>
           }
@@ -118,7 +118,7 @@ function SideMenu(props: any) {
           key="suppliers"
           title={
             <span>
-              <Icon component={Icon_SuppliersManage} />
+              <Icon component={() => <Icon_SuppliersManage/>} />
               <span>供应商管理</span>
             </span>
           }
